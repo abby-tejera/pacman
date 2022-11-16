@@ -14,6 +14,8 @@ section.hero .background {
 
 	height: 100%;
 	width: 100%;
+
+	background-color: var(--background);
 }
 
 section.hero .background::before {

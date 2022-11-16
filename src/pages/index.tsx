@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import backgrounImg from '../../public/space.jpg'
+
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -8,7 +10,7 @@ export default function Home() {
     <div>
       <section className={styles.hero}>
         <div className={styles.background}>
-          <Image src="/space.jpg" alt="Space background." fill />
+          <Image src={backgrounImg} alt="Space background." fill priority />
         </div>
 
         <main>
