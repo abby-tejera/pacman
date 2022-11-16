@@ -1,3 +1,91 @@
-.container {
-  padding: 0 2rem;
+section.hero {
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
+
+section.hero .background {
+	position: absolute;
+	z-index: -1;
+
+	height: 100%;
+	width: 100%;
+}
+
+section.hero .background::before {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	content: '';
+	display: block;
+	height: 100%;
+	width: 100%;
+	background: linear-gradient(to top, var(--background), rgba(0,0,0,0));
+}
+
+section.hero .background img {
+	object-fit: cover;
+	object-position: 50% top;
+}
+
+section.hero main {
+	display: flex;
+	flex-direction: column;
+	gap: 5rem;
+	align-items: center;
+
+	margin: auto;
+}
+
+section.hero main h1 {
+	text-transform: uppercase;
+	font-size: 4rem;
+	font-family: 'Ubuntu', sans-serif;
+	text-align: center;
+
+	color: var(--primary);
+	text-shadow: -5px 5px var(--background);
+}
+
+section.hero main button {
+	background: var(--primary);
+	border: none;
+	
+	border-radius: 3rem;
+	padding: 0 1rem;
+	height: 5rem;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	transition: transform 0.2s, filter 0.2s;
+}
+
+section.hero main button:hover {
+	transform: scale(0.9);
+	filter: brightness(0.75);
+}
+
+section.hero main button svg {
+	transform: rotate(90deg) scale(0.5);
+	fill: var(--background);
+
+	margin-right: -1rem;
+}
+
+section.hero main button span {
+	text-transform: uppercase;
+	font-size: 2rem;
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: bold;
+	text-align: center;
+
+	color: var(--background);
+}
+
