@@ -52,7 +52,7 @@ section.hero main h1 {
 	text-shadow: -5px 5px var(--background);
 }
 
-section.hero main button {
+section.hero main a {
 	background: var(--primary);
 	border: none;
 	
@@ -67,19 +67,19 @@ section.hero main button {
 	transition: transform 0.2s, filter 0.2s;
 }
 
-section.hero main button:hover {
+section.hero main a:hover {
 	transform: scale(0.9);
 	filter: brightness(0.75);
 }
 
-section.hero main button svg {
+section.hero main a svg {
 	transform: rotate(90deg) scale(0.5);
 	fill: var(--background);
 
 	margin-right: -1rem;
 }
 
-section.hero main button span {
+section.hero main a span {
 	text-transform: uppercase;
 	font-size: 2rem;
 	font-family: 'Ubuntu', sans-serif;
