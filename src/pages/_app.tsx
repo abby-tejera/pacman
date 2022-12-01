@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 
 import '../styles/global.css'
+import { GameProvider } from '../contexts/game'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -10,7 +11,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <title>Pac-Man</title>
       </Head>
 
-      <Component {...pageProps} />
+      <GameProvider>
+        <Component {...pageProps} />
+      </GameProvider>
     </>
   )
 }

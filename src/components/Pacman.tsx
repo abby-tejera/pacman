@@ -1,20 +1,21 @@
 import { useEffect, Dispatch, SetStateAction } from 'react'
 
 import styles from '../styles/Pacman.module.css'
-
-type Props = {
-    x: number
-    y: number
-    setX: Dispatch<SetStateAction<number>>
-    setY: Dispatch<SetStateAction<number>>
-    containerWidth: number
-    containerHeight: number
-}
+import { useGame } from '../hooks/useGame'
 
 const step = 10
 const radius = 25
 
-export function Pacman({x, y, setX, setY, containerWidth, containerHeight}: Props) {
+export function Pacman() {
+    const {
+        containerWidth,
+        containerHeight,
+        pacmanX: x,
+        pacmanY: y,
+        setPacmanX: setX,
+        setPacmanY: setY,
+    } = useGame()
+
     // Performing action on first page load.
     useEffect(() => {
         // Handle Pacman's movement. Checks if the next position goes over the border and prevents it.
