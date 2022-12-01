@@ -13,10 +13,3 @@
 	border: var(--stroke) 0.25rem solid;
 	border-radius: 0.5rem;
 }
-
-.pacman {
-	stroke-width: 0;
-	fill: yellow;
-
-	transition: cx 0.1s, cy 0.1s;
-}
