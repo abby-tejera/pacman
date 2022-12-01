@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import styles from '../styles/Game.module.css'
 
-export default function Home() {
+// Game page (url: '/game')
+export default function Game() {
+  // Using State Hooks so that pacman's position is updated on the view.
   const [pacmanX, setPacmanX] = useState(625)
   const [pacmanY, setPacmanY] = useState(325)
 
+  // Performing action on first page load.
   useEffect(() => {
+    // Calling movePacman every time any key is pressed.
     document.addEventListener("keydown", (e) => {
       movePacman(e.key)
     });
@@ -15,6 +19,7 @@ export default function Home() {
     }
   }, [])
 
+  // Handle Pacman's movement.
   function movePacman(key: string) {
     switch (key) {
       case "ArrowDown":
@@ -33,6 +38,7 @@ export default function Home() {
         setPacmanX(x => x + 10);
         break;
     
+      // If user didn't press arrow keys, ignore.
       default:
         break;
     }

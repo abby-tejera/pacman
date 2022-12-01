@@ -5,6 +5,7 @@ import backgrounImg from '../../public/space.jpg'
 
 import styles from '../styles/Home.module.css'
 
+// Home page of website (url: '/')
 export default function Home() {
   return (
     <div>
