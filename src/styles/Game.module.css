@@ -10,6 +10,6 @@
 }
 
 .container {
-	border: var(--stroke) 0.25rem solid;
+	outline: var(--stroke) 0.25rem solid;
 	border-radius: 0.5rem;
 }

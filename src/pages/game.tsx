@@ -9,10 +9,13 @@ export default function Game() {
   const [pacmanX, setPacmanX] = useState(625)
   const [pacmanY, setPacmanY] = useState(325)
 
+  const width = 1200;
+  const height = 600;
+
   return (
     <div className={styles.page}>
-      <svg className={styles.container} xmlns="http://www.w3.org/2000/svg" width="1200" height="600">
-        <Pacman x={pacmanX} y={pacmanY} setX={setPacmanX} setY={setPacmanY} />
+      <svg className={styles.container} xmlns="http://www.w3.org/2000/svg" width={width} height={height}>
+        <Pacman x={pacmanX} y={pacmanY} setX={setPacmanX} setY={setPacmanY}  containerWidth={width} containerHeight={height} />
       </svg>
     </div>
   )

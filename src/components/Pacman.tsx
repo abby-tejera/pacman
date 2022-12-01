@@ -7,28 +7,33 @@ type Props = {
     y: number
     setX: Dispatch<SetStateAction<number>>
     setY: Dispatch<SetStateAction<number>>
+    containerWidth: number
+    containerHeight: number
 }
 
-export function Pacman({x, y, setX, setY}: Props) {
+const step = 10
+const radius = 25
+
+export function Pacman({x, y, setX, setY, containerWidth, containerHeight}: Props) {
     // Performing action on first page load.
     useEffect(() => {
-        // Handle Pacman's movement.
+        // Handle Pacman's movement. Checks if the next position goes over the border and prevents it.
         function movePacman(key: string) {
             switch (key) {
             case "ArrowDown":
-                setY(y => y + 10);
+                setY(y => (y + step + radius <= containerHeight) ? y + step : y);
                 break;
             
             case "ArrowUp":
-                setY(y => y - 10);
+                setY(y => (y - step - radius >= 0) ? y - step : y);
                 break;
 
             case "ArrowLeft":
-                setX(x => x - 10);
+                setX(x => (x - step - radius >= 0) ? x - step : x);
                 break;
 
             case "ArrowRight":
-                setX(x => x + 10);
+                setX(x => (x + step + radius <= containerWidth) ? x + step : x);
                 break;
             
             // If user didn't press arrow keys, ignore.
@@ -45,9 +50,9 @@ export function Pacman({x, y, setX, setY}: Props) {
         return () => {
             document.removeEventListener("keydown", () => {});
         }
-    }, [setX, setY])
+    }, [setX, setY, containerWidth, containerHeight])
 
     return (
-        <circle className={styles.pacman} cx={x} cy={y} r="25" />
+        <circle className={styles.pacman} cx={x} cy={y} r={radius} />
     )
 }
