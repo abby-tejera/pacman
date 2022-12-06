@@ -2,7 +2,7 @@ import {ReactNode, useEffect, useState, Dispatch, SetStateAction, useCallback} f
 import {createContext} from 'react'
 
 import { Ghost } from '../types/ghost'
-import { Snack } from '../types/snack'
+import { Snack, snackRadius } from '../types/snack'
 
 type GameContextType = {
     containerWidth: number
@@ -45,6 +45,8 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [snacks, setSnacks] = useState<Snack[]>([])
 
+    const [gameHasStarted, setGameHasStarted] = useState(false)
+
     // Resets the game.
     const reset = useCallback(() => {
         console.log('reset')
@@ -53,11 +55,13 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         generateGhosts()
         generateSnacks()
+
+        setGameHasStarted(true)
     }, [])
 
     // Handle when the player loses.
     const gameOver = useCallback(() => {
-        console.log('gameOver')
+        setGameHasStarted(false)
 
         alert("You lost!")
         reset()
@@ -110,6 +114,36 @@ export function GameProvider({children}: GameContextProviderProps) {
         }))
     }, [pacmanX, pacmanY])
 
+    // Check if pacman is eating a snack.
+    const checkIfEaten = useCallback(() => {
+        // Square that represents Pacman's position.
+        const left = pacmanX - radius;
+        const right = pacmanX + radius;
+        const top = pacmanY - radius;
+        const bottom = pacmanY + radius;
+
+        // Remove eaten snacks.
+        setSnacks(snacks => snacks.filter(snack => {
+            const snackLeft = snack.x - snackRadius;
+            const snackRight = snack.x + snackRadius;
+            const snackTop = snack.y - snackRadius;
+            const snackBottom = snack.y + snackRadius;
+
+            // True if not eaten, and false if eaten.
+            return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
+        }))
+
+
+    }, [pacmanX, pacmanY])
+
+    // Handle when the player wins.
+    const victory = useCallback(() => {
+        setGameHasStarted(false)
+
+        alert("You won!!!!!")
+        reset()
+    }, [reset])
+
     useEffect(() => {
         reset()
     }, [reset])
@@ -121,6 +155,16 @@ export function GameProvider({children}: GameContextProviderProps) {
     useEffect(() => {
         moveGhosts()
     }, [moveGhosts])
+
+    useEffect(() => {
+        checkIfEaten()
+    }, [checkIfEaten])
+
+    useEffect(() => {
+        if (gameHasStarted && snacks.length == 0) {
+            victory()
+        }
+    }, [gameHasStarted, snacks, victory])
 
     // Adds ghosts to the game. (For now, only one ghost at a time.)
     function generateGhosts() {

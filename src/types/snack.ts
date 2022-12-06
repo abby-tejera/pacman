@@ -3,3 +3,5 @@ export type Snack = {
     x: number
     y: number
 }
+
+export const snackRadius = 5
