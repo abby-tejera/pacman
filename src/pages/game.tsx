@@ -2,13 +2,15 @@ import styles from '../styles/Game.module.css'
 import {Pacman} from '../components/Pacman'
 import {Ghost} from '../components/Ghost'
 import { useGame } from '../hooks/useGame'
+import { Snack } from '../components/Snack'
 
 // Game page (url: '/game')
 export default function Game() {
   const {
     containerWidth,
     containerHeight,
-    ghosts
+    ghosts,
+    snacks
   } = useGame()
 
   return (
@@ -19,6 +21,10 @@ export default function Game() {
         width={containerWidth}
         height={containerHeight}
       >
+        {snacks.map(snack => (
+          <Snack key={snack.id} snack={snack} />
+        ))}
+
         <Pacman />
 
         {ghosts.map(ghost => (

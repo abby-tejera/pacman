@@ -2,11 +2,14 @@ import {ReactNode, useEffect, useState, Dispatch, SetStateAction, useCallback} f
 import {createContext} from 'react'
 
 import { Ghost } from '../types/ghost'
+import { Snack } from '../types/snack'
 
 type GameContextType = {
     containerWidth: number
     containerHeight: number
-    step: number
+
+    ghostStep: number
+    pacmanStep: number
     radius: number
 
     pacmanX: number
@@ -15,6 +18,7 @@ type GameContextType = {
     setPacmanY: Dispatch<SetStateAction<number>>
 
     ghosts: Ghost[]
+    snacks: Snack[]
 }
 
 export const GameContext = createContext({} as GameContextType)
@@ -26,7 +30,9 @@ type GameContextProviderProps = {
 export function GameProvider({children}: GameContextProviderProps) {
     const containerWidth = 1200
     const containerHeight = 600
-    const step = 5 // step for ghosts
+
+    const ghostStep = 2 // step for ghosts
+    const pacmanStep = 7 // step for pacman
     const radius = 25 // radius of pacman and ghosts.
 
     const pacmanInitialX = 625
@@ -37,16 +43,22 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [ghosts, setGhosts] = useState<Ghost[]>([])
 
+    const [snacks, setSnacks] = useState<Snack[]>([])
+
     // Resets the game.
     const reset = useCallback(() => {
+        console.log('reset')
         setPacmanX(pacmanInitialX)
         setPacmanY(pacmanInitialY)
 
         generateGhosts()
+        generateSnacks()
     }, [])
 
     // Handle when the player loses.
     const gameOver = useCallback(() => {
+        console.log('gameOver')
+
         alert("You lost!")
         reset()
     }, [reset])
@@ -81,28 +93,26 @@ export function GameProvider({children}: GameContextProviderProps) {
     const moveGhosts = useCallback(() => {
         setGhosts(ghosts => ghosts.map(ghost => {
             // Choose new x value. Make sure that we don't go over the borders.
-            if (ghost.x < pacmanX && ghost.x + step + radius <= containerWidth) {
-                ghost.x = ghost.x + step
-            } else if (ghost.x > pacmanX && ghost.x - step - radius >= 0) {
-                ghost.x = ghost.x - step
+            if (ghost.x < pacmanX && ghost.x + ghostStep + radius <= containerWidth) {
+                ghost.x = ghost.x + ghostStep
+            } else if (ghost.x > pacmanX && ghost.x - ghostStep - radius >= 0) {
+                ghost.x = ghost.x - ghostStep
             }
 
             // Choose new y value. Make sure that we don't go over the borders.
-            if (ghost.y < pacmanY && ghost.y + step + radius <= containerHeight) {
-                ghost.y = ghost.y + step
-            } else if (ghost.y > pacmanY && ghost.y - step - radius >= 0) {
-                ghost.y = ghost.y - step
+            if (ghost.y < pacmanY && ghost.y + ghostStep + radius <= containerHeight) {
+                ghost.y = ghost.y + ghostStep
+            } else if (ghost.y > pacmanY && ghost.y - ghostStep - radius >= 0) {
+                ghost.y = ghost.y - ghostStep
             }
             
             return ghost
         }))
-
-        // checkIfLost()
     }, [pacmanX, pacmanY])
 
     useEffect(() => {
-        generateGhosts()
-    }, [])
+        reset()
+    }, [reset])
 
     useEffect(() => {
         checkIfLost()
@@ -121,19 +131,31 @@ export function GameProvider({children}: GameContextProviderProps) {
             y: Math.floor(Math.random() * containerHeight),
         }])
     }
+
+    // Adds snacks to the game. (For now, only one snack at a time.)
+    function generateSnacks() {
+        setSnacks([{
+            id: Math.random(),
+            // Random coordinates.
+            x: Math.floor(Math.random() * containerWidth),
+            y: Math.floor(Math.random() * containerHeight),
+        }])
+    }
     
     return (
         <GameContext.Provider
             value={{
                 containerWidth,
                 containerHeight,
-                step,
+                ghostStep,
+                pacmanStep,
                 radius,
                 pacmanX,
                 setPacmanX,
                 pacmanY,
                 setPacmanY,
                 ghosts,
+                snacks,
             }}
         >
             {children}

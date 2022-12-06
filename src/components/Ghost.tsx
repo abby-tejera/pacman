@@ -9,21 +9,7 @@ type Props = {
 }
 
 export function Ghost({ghost}: Props) {
-    const {
-        radius,
-        // moveGhost
-    } = useGame()
-
-    // useEffect(() => {
-    //     // Calling moveGhost every 0.1 second.
-    //     const timer = setTimeout(() => {
-    //         moveGhost(ghost)
-    //     }, 0.1 * 1000 /* 0.1 second */)
-
-    //     return () => {
-    //         clearTimeout(timer)
-    //     }
-    // }, [ghost, moveGhost])
+    const {radius} = useGame()
 
     return (
         <circle className={styles.ghost} cx={ghost.x} cy={ghost.y} r={radius} />

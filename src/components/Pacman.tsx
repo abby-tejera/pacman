@@ -3,9 +3,6 @@ import { useEffect, Dispatch, SetStateAction } from 'react'
 import styles from '../styles/Pacman.module.css'
 import { useGame } from '../hooks/useGame'
 
-const step = 10
-const radius = 25
-
 export function Pacman() {
     const {
         containerWidth,
@@ -14,6 +11,8 @@ export function Pacman() {
         pacmanY: y,
         setPacmanX: setX,
         setPacmanY: setY,
+        pacmanStep,
+        radius
     } = useGame()
 
     // Performing action on first page load.
@@ -22,19 +21,19 @@ export function Pacman() {
         function movePacman(key: string) {
             switch (key) {
             case "ArrowDown":
-                setY(y => (y + step + radius <= containerHeight) ? y + step : y);
+                setY(y => (y + pacmanStep + radius <= containerHeight) ? y + pacmanStep : y);
                 break;
             
             case "ArrowUp":
-                setY(y => (y - step - radius >= 0) ? y - step : y);
+                setY(y => (y - pacmanStep - radius >= 0) ? y - pacmanStep : y);
                 break;
 
             case "ArrowLeft":
-                setX(x => (x - step - radius >= 0) ? x - step : x);
+                setX(x => (x - pacmanStep - radius >= 0) ? x - pacmanStep : x);
                 break;
 
             case "ArrowRight":
-                setX(x => (x + step + radius <= containerWidth) ? x + step : x);
+                setX(x => (x + pacmanStep + radius <= containerWidth) ? x + pacmanStep : x);
                 break;
             
             // If user didn't press arrow keys, ignore.
@@ -51,7 +50,7 @@ export function Pacman() {
         return () => {
             document.removeEventListener("keydown", () => {});
         }
-    }, [setX, setY, containerWidth, containerHeight])
+    }, [setX, setY, containerWidth, containerHeight, pacmanStep, radius])
 
     return (
         <circle className={styles.pacman} cx={x} cy={y} r={radius} />
