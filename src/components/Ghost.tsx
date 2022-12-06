@@ -11,19 +11,19 @@ type Props = {
 export function Ghost({ghost}: Props) {
     const {
         radius,
-        moveGhost
+        // moveGhost
     } = useGame()
 
-    useEffect(() => {
-        // Calling moveGhost every 0.1 second.
-        const timer = setTimeout(() => {
-            moveGhost(ghost)
-        }, 0.1 * 1000 /* 0.1 second */)
+    // useEffect(() => {
+    //     // Calling moveGhost every 0.1 second.
+    //     const timer = setTimeout(() => {
+    //         moveGhost(ghost)
+    //     }, 0.1 * 1000 /* 0.1 second */)
 
-        return () => {
-            clearTimeout(timer)
-        }
-    }, [ghost, moveGhost])
+    //     return () => {
+    //         clearTimeout(timer)
+    //     }
+    // }, [ghost, moveGhost])
 
     return (
         <circle className={styles.ghost} cx={ghost.x} cy={ghost.y} r={radius} />
