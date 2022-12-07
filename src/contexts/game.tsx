@@ -34,6 +34,7 @@ export function GameProvider({children}: GameContextProviderProps) {
     const ghostStep = 2 // step for ghosts
     const pacmanStep = 7 // step for pacman
     const radius = 25 // radius of pacman and ghosts.
+    const safeDistance = 100 // safe zone around pacman (nothing is generated in this area)
 
     const pacmanInitialX = 625
     const pacmanInitialY = 325
@@ -49,7 +50,6 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Resets the game.
     const reset = useCallback(() => {
-        console.log('reset')
         setPacmanX(pacmanInitialX)
         setPacmanY(pacmanInitialY)
 
@@ -109,7 +109,7 @@ export function GameProvider({children}: GameContextProviderProps) {
             } else if (ghost.y > pacmanY && ghost.y - ghostStep - radius >= 0) {
                 ghost.y = ghost.y - ghostStep
             }
-            
+             
             return ghost
         }))
     }, [pacmanX, pacmanY])
@@ -166,24 +166,56 @@ export function GameProvider({children}: GameContextProviderProps) {
         }
     }, [gameHasStarted, snacks, victory])
 
-    // Adds ghosts to the game. (For now, only one ghost at a time.)
+    // Adds ghosts to the game.
     function generateGhosts() {
-        setGhosts([{
-            id: Math.random(),
-            // Random coordinates.
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-        }])
+        const randomGhosts: Snack[] = []
+        for (let i = 0; i < 4; i++) {
+            const ghost = {
+                id: Math.random(),
+                // Random coordinates.
+                x: Math.floor(Math.random() * containerWidth),
+                y: Math.floor(Math.random() * containerHeight),
+            }
+
+            // Create safe zone around pacman and avoid going out of bounds.
+            while ((ghost.x > pacmanInitialX - safeDistance && ghost.x < pacmanInitialX + safeDistance) || ghost.x - radius < 0 || ghost.x + radius > containerWidth) {
+                ghost.x = Math.floor(Math.random() * containerWidth)
+            }
+            while ((ghost.y > pacmanInitialY - safeDistance && ghost.y < pacmanInitialY + safeDistance) || ghost.y - radius < 0 || ghost.y + radius > containerHeight) {
+                ghost.y = Math.floor(Math.random() * containerWidth)
+            }
+
+            console.log(ghost)
+
+            randomGhosts.push(ghost)
+        }
+
+        setGhosts(randomGhosts)
     }
 
-    // Adds snacks to the game. (For now, only one snack at a time.)
+    // Adds snacks to the game.
     function generateSnacks() {
-        setSnacks([{
-            id: Math.random(),
-            // Random coordinates.
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-        }])
+        const randomSnacks: Snack[] = []
+        for (let i = 0; i < 100; i++) {
+            const snack = {
+                id: Math.random(),
+                // Random coordinates.
+                x: Math.floor(Math.random() * containerWidth),
+                y: Math.floor(Math.random() * containerHeight),
+            }
+
+            // Create safe zone around pacman and avoid going out of bounds.
+            while ((snack.x > pacmanInitialX - safeDistance && snack.x < pacmanInitialX + safeDistance) || snack.x - radius < 0 || snack.x + radius > containerWidth) {
+                snack.x = Math.floor(Math.random() * containerWidth)
+            }
+            while ((snack.y > pacmanInitialY - safeDistance && snack.y < pacmanInitialY + safeDistance) || snack.y - radius < 0 || snack.y + radius > containerHeight) {
+                snack.y = Math.floor(Math.random() * containerWidth)
+            }
+
+            randomSnacks.push(snack)
+        }
+
+        setSnacks(randomSnacks)
     }
     
     return (
