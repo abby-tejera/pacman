@@ -1,10 +1,25 @@
 .ghost {
 	stroke-width: 0;
-	fill: blue;
 
-	transition: cx 0.1s, cy 0.1s;
+	transition: x 0.1s, y 0.1s;
+}
+
+.red {
+	fill: red
+}
+
+.pink {
+	fill: pink
+}
+
+.cyan {
+	fill: cyan
+}
+
+.orange {
+	fill: orange
 }
 
 .weakened {
-	fill: red;
+	fill: blue;
 }

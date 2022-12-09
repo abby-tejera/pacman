@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-
 import styles from '../styles/Ghost.module.css'
 import { useGame } from '../hooks/useGame'
 import { Ghost as GhostType } from '../types/ghost'
@@ -12,14 +10,16 @@ export function Ghost({ghost}: Props) {
     const {radius, isPoweredUp} = useGame()
 
     return (
-        <circle
+        <rect
             className={`
                 ${styles.ghost}
+                ${styles[ghost.personality]}
                 ${isPoweredUp ? styles.weakened : ''}
             `}
-            cx={ghost.x}
-            cy={ghost.y}
-            r={radius}
+            x={ghost.x}
+            y={ghost.y}
+            width={2 * radius}
+            height={2 * radius}
         />
     )
 }
