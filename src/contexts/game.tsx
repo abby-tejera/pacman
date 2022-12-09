@@ -16,6 +16,7 @@ type GameContextType = {
     pacmanY: number
     setPacmanX: Dispatch<SetStateAction<number>>
     setPacmanY: Dispatch<SetStateAction<number>>
+    isPoweredUp: boolean
 
     ghosts: Ghost[]
     snacks: Food[]
@@ -42,6 +43,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
+    const [isPoweredUp, setIsPoweredUp] = useState(false)
 
     const [ghosts, setGhosts] = useState<Ghost[]>([])
 
@@ -91,10 +93,16 @@ export function GameProvider({children}: GameContextProviderProps) {
                 continue;
             }
 
+            // If ghosts are weakened, they are eaten.
+            if (isPoweredUp) {
+                setGhosts(ghosts => ghosts.filter(({id}) => id != ghost.id))
+                continue;
+            }
+
             // If ghost is touching pacman, the game is lost.
             gameOver()
         }
-    }, [gameOver, ghosts, pacmanX, pacmanY])
+    }, [gameOver, ghosts, pacmanX, pacmanY, isPoweredUp])
 
     // Handle Ghosts' movement. Tries to follow Pacman using a very simple logic.
     const moveGhosts = useCallback(() => {
@@ -153,7 +161,17 @@ export function GameProvider({children}: GameContextProviderProps) {
             const snackBottom = powerUp.y + snackRadius;
 
             // True if not eaten, and false if eaten.
-            return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
+            const notPoweredUp = (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
+
+            if (!notPoweredUp) {
+                setIsPoweredUp(true)
+                setTimeout(
+                    () => setIsPoweredUp(false),
+                    5 * 1000 // 5 seconds
+                )
+            }
+
+           return notPoweredUp
         }))
     }, [pacmanX, pacmanY])
 
@@ -280,6 +298,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                 setPacmanX,
                 pacmanY,
                 setPacmanY,
+                isPoweredUp,
                 ghosts,
                 snacks,
                 powerUps,

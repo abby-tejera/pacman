@@ -9,9 +9,17 @@ type Props = {
 }
 
 export function Ghost({ghost}: Props) {
-    const {radius} = useGame()
+    const {radius, isPoweredUp} = useGame()
 
     return (
-        <circle className={styles.ghost} cx={ghost.x} cy={ghost.y} r={radius} />
+        <circle
+            className={`
+                ${styles.ghost}
+                ${isPoweredUp ? styles.weakened : ''}
+            `}
+            cx={ghost.x}
+            cy={ghost.y}
+            r={radius}
+        />
     )
 }

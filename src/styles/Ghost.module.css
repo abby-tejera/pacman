@@ -4,3 +4,7 @@
 
 	transition: cx 0.1s, cy 0.1s;
 }
+
+.weakened {
+	fill: red;
+}
