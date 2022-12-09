@@ -1,17 +1,12 @@
-import { useEffect } from 'react'
-
-import styles from '../styles/Snack.module.css'
-import { useGame } from '../hooks/useGame'
-import { Snack as SnackType } from '../types/snack'
+import styles from '../styles/Food.module.css'
+import { Food, snackRadius } from '../types/food'
 
 type Props = {
-    snack: SnackType
+    snack: Food
 }
 
 export function Snack({snack}: Props) {
-    const radius = 5
-
     return (
-        <circle className={styles.snack} cx={snack.x} cy={snack.y} r={radius} />
+        <circle className={styles.food} cx={snack.x} cy={snack.y} r={snackRadius} />
     )
 }

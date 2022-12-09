@@ -3,6 +3,7 @@ import {Pacman} from '../components/Pacman'
 import {Ghost} from '../components/Ghost'
 import { useGame } from '../hooks/useGame'
 import { Snack } from '../components/Snack'
+import { PowerUp } from '../components/PowerUp'
 
 // Game page (url: '/game')
 export default function Game() {
@@ -10,7 +11,8 @@ export default function Game() {
     containerWidth,
     containerHeight,
     ghosts,
-    snacks
+    snacks,
+    powerUps,
   } = useGame()
 
   return (
@@ -23,6 +25,10 @@ export default function Game() {
       >
         {snacks.map(snack => (
           <Snack key={snack.id} snack={snack} />
+        ))}
+
+        {powerUps.map(powerUp => (
+          <PowerUp key={powerUp.id} powerUp={powerUp} />
         ))}
 
         <Pacman />

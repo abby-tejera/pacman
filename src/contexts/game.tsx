@@ -2,7 +2,7 @@ import {ReactNode, useEffect, useState, Dispatch, SetStateAction, useCallback} f
 import {createContext} from 'react'
 
 import { Ghost } from '../types/ghost'
-import { Snack, snackRadius } from '../types/snack'
+import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../types/food'
 
 type GameContextType = {
     containerWidth: number
@@ -18,7 +18,8 @@ type GameContextType = {
     setPacmanY: Dispatch<SetStateAction<number>>
 
     ghosts: Ghost[]
-    snacks: Snack[]
+    snacks: Food[]
+    powerUps: Food[]
 }
 
 export const GameContext = createContext({} as GameContextType)
@@ -44,7 +45,8 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [ghosts, setGhosts] = useState<Ghost[]>([])
 
-    const [snacks, setSnacks] = useState<Snack[]>([])
+    const [snacks, setSnacks] = useState<Food[]>([])
+    const [powerUps, setPowerUps] = useState<Food[]>([])
 
     const [gameHasStarted, setGameHasStarted] = useState(false)
 
@@ -55,6 +57,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         generateGhosts()
         generateSnacks()
+        generatePowerUps()
 
         setGameHasStarted(true)
     }, [])
@@ -132,8 +135,26 @@ export function GameProvider({children}: GameContextProviderProps) {
             // True if not eaten, and false if eaten.
             return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
         }))
+    }, [pacmanX, pacmanY])
 
+    // Check if pacman is eating a snack.
+    const checkIfPoweredUp = useCallback(() => {
+        // Square that represents Pacman's position.
+        const left = pacmanX - radius;
+        const right = pacmanX + radius;
+        const top = pacmanY - radius;
+        const bottom = pacmanY + radius;
 
+        // Remove eaten snacks.
+        setPowerUps(powerUps => powerUps.filter(powerUp => {
+            const snackLeft = powerUp.x - snackRadius;
+            const snackRight = powerUp.x + snackRadius;
+            const snackTop = powerUp.y - snackRadius;
+            const snackBottom = powerUp.y + snackRadius;
+
+            // True if not eaten, and false if eaten.
+            return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
+        }))
     }, [pacmanX, pacmanY])
 
     // Handle when the player wins.
@@ -161,6 +182,10 @@ export function GameProvider({children}: GameContextProviderProps) {
     }, [checkIfEaten])
 
     useEffect(() => {
+        checkIfPoweredUp()
+    }, [checkIfPoweredUp])
+
+    useEffect(() => {
         if (gameHasStarted && snacks.length == 0) {
             victory()
         }
@@ -168,7 +193,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Adds ghosts to the game.
     function generateGhosts() {
-        const randomGhosts: Snack[] = []
+        const randomGhosts: Ghost[] = []
         for (let i = 0; i < 4; i++) {
             const ghost = {
                 id: Math.random(),
@@ -195,8 +220,8 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Adds snacks to the game.
     function generateSnacks() {
-        const randomSnacks: Snack[] = []
-        for (let i = 0; i < 100; i++) {
+        const randomSnacks: Food[] = []
+        for (let i = 0; i < snacksNumber; i++) {
             const snack = {
                 id: Math.random(),
                 // Random coordinates.
@@ -217,6 +242,31 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         setSnacks(randomSnacks)
     }
+
+    // Adds power-ups to the game.
+    function generatePowerUps() {
+        const randomPowerUps: Food[] = []
+        for (let i = 0; i < powerUpsNumber; i++) {
+            const powerUps = {
+                id: Math.random(),
+                // Random coordinates.
+                x: Math.floor(Math.random() * containerWidth),
+                y: Math.floor(Math.random() * containerHeight),
+            }
+
+            // Create safe zone around pacman and avoid going out of bounds.
+            while ((powerUps.x > pacmanInitialX - safeDistance && powerUps.x < pacmanInitialX + safeDistance) || powerUps.x - radius < 0 || powerUps.x + radius > containerWidth) {
+                powerUps.x = Math.floor(Math.random() * containerWidth)
+            }
+            while ((powerUps.y > pacmanInitialY - safeDistance && powerUps.y < pacmanInitialY + safeDistance) || powerUps.y - radius < 0 || powerUps.y + radius > containerHeight) {
+                powerUps.y = Math.floor(Math.random() * containerWidth)
+            }
+
+            randomPowerUps.push(powerUps)
+        }
+
+        setPowerUps(randomPowerUps)
+    }
     
     return (
         <GameContext.Provider
@@ -232,6 +282,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                 setPacmanY,
                 ghosts,
                 snacks,
+                powerUps,
             }}
         >
             {children}
