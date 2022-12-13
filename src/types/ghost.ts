@@ -3,4 +3,6 @@ export type Ghost = {
     x: number
     y: number
     personality: string // red, pink, cyan, or orange
+    targetX: number
+    targetY: number
 }

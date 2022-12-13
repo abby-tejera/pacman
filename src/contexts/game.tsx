@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useState, Dispatch, SetStateAction, useCallback} from 'react'
+import {ReactNode, useEffect, useState, Dispatch, SetStateAction, useCallback, use} from 'react'
 import {createContext} from 'react'
 
 import { Ghost } from '../types/ghost'
@@ -104,27 +104,6 @@ export function GameProvider({children}: GameContextProviderProps) {
         }
     }, [gameOver, ghosts, pacmanX, pacmanY, isPoweredUp])
 
-    // Handle Ghosts' movement. Tries to follow Pacman using a very simple logic.
-    const moveGhosts = useCallback(() => {
-        setGhosts(ghosts => ghosts.map(ghost => {
-            // Choose new x value. Make sure that we don't go over the borders.
-            if (ghost.x < pacmanX && ghost.x + ghostStep + radius <= containerWidth) {
-                ghost.x = ghost.x + ghostStep
-            } else if (ghost.x > pacmanX && ghost.x - ghostStep - radius >= 0) {
-                ghost.x = ghost.x - ghostStep
-            }
-
-            // Choose new y value. Make sure that we don't go over the borders.
-            if (ghost.y < pacmanY && ghost.y + ghostStep + radius <= containerHeight) {
-                ghost.y = ghost.y + ghostStep
-            } else if (ghost.y > pacmanY && ghost.y - ghostStep - radius >= 0) {
-                ghost.y = ghost.y - ghostStep
-            }
-             
-            return ghost
-        }))
-    }, [pacmanX, pacmanY])
-
     // Check if pacman is eating a snack.
     const checkIfEaten = useCallback(() => {
         // Square that represents Pacman's position.
@@ -192,16 +171,58 @@ export function GameProvider({children}: GameContextProviderProps) {
     }, [checkIfLost])
 
     useEffect(() => {
-        moveGhosts()
-    }, [moveGhosts])
-
-    useEffect(() => {
         checkIfEaten()
     }, [checkIfEaten])
 
     useEffect(() => {
         checkIfPoweredUp()
     }, [checkIfPoweredUp])
+
+    // Moves ghosts in the direction of their targets.
+    useEffect(function moveGhosts() {
+        const timeInterval = 0.1 // in seconds
+
+        const interval = setInterval(() => {
+            setGhosts(ghosts => ghosts.map(ghost => {
+                // Choose new x value. Make sure that we don't go over the borders.
+                if (ghost.x < ghost.targetX && ghost.x + ghostStep + radius <= containerWidth) {
+                    ghost.x = ghost.x + ghostStep
+                } else if (ghost.x > ghost.targetX && ghost.x - ghostStep - radius >= 0) {
+                    ghost.x = ghost.x - ghostStep
+                }
+    
+                // Choose new y value. Make sure that we don't go over the borders.
+                if (ghost.y < ghost.targetY && ghost.y + ghostStep + radius <= containerHeight) {
+                    ghost.y = ghost.y + ghostStep
+                } else if (ghost.y > ghost.targetY && ghost.y - ghostStep - radius >= 0) {
+                    ghost.y = ghost.y - ghostStep
+                }
+                 
+                return ghost
+            }))
+        }, timeInterval * 1000)
+
+        return () => {
+            clearInterval(interval)
+        }
+    }, [])
+
+    // Updates ghosts' targets based on their personalities.
+    useEffect(function updateGhostsTargets() {
+        setGhosts(ghosts => ghosts.map(ghost => {
+            switch (ghost.personality) {
+                case 'red':
+                    ghost.targetX = pacmanX
+                    ghost.targetY = pacmanY
+                    break;
+            
+                default:
+                    break;
+            }
+
+            return ghost
+        }))
+    }, [pacmanX, pacmanY])
 
     useEffect(() => {
         if (gameHasStarted && snacks.length == 0) {
@@ -216,21 +237,29 @@ export function GameProvider({children}: GameContextProviderProps) {
             personality: 'red',
             x: Math.floor(Math.random() * containerWidth),
             y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
         }, {
             id: Math.random(),
             personality: 'pink',
             x: Math.floor(Math.random() * containerWidth),
             y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
         }, {
             id: Math.random(),
             personality: 'cyan',
             x: Math.floor(Math.random() * containerWidth),
             y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
         }, {
             id: Math.random(),
             personality: 'orange',
             x: Math.floor(Math.random() * containerWidth),
             y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
         }]
         
         // Create safe zone around pacman and avoid going out of bounds.
