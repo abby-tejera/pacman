@@ -1,6 +1,6 @@
 import styles from '../styles/Ghost.module.css'
 import { useGame } from '../hooks/useGame'
-import { Ghost as GhostType } from '../types/ghost'
+import { Ghost as GhostType } from '../constants/ghost'
 
 type Props = {
     ghost: GhostType

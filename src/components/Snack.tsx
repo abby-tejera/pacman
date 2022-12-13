@@ -1,5 +1,5 @@
 import styles from '../styles/Food.module.css'
-import { Food, snackRadius } from '../types/food'
+import { Food, snackRadius } from '../constants/food'
 
 type Props = {
     snack: Food

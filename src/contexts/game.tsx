@@ -1,8 +1,8 @@
 import {ReactNode, useEffect, useState, useCallback} from 'react'
 import {createContext} from 'react'
 
-import { Ghost } from '../types/ghost'
-import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../types/food'
+import { Ghost } from '../constants/ghost'
+import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../constants/food'
 import { containerHeight, containerWidth, hasWall } from '../constants/maze'
 
 type GameContextType = {

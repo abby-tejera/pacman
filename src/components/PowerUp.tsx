@@ -1,5 +1,5 @@
 import styles from '../styles/Food.module.css'
-import { Food, powerUpRadius } from '../types/food'
+import { Food, powerUpRadius } from '../constants/food'
 
 type Props = {
     powerUp: Food

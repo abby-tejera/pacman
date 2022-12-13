@@ -4,7 +4,7 @@ export type Food = {
     y: number
 }
 
-export const snackRadius = 3
-export const powerUpRadius = 10
+export const snackRadius = 2
+export const powerUpRadius = 6
 export const snacksNumber = 20
 export const powerUpsNumber = 2
