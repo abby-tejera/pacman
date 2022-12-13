@@ -1,9 +1,10 @@
 import {ReactNode, useEffect, useState, useCallback} from 'react'
 import {createContext} from 'react'
 
-import { Ghost } from '../constants/ghost'
+import { Ghost, initialGhosts } from '../constants/ghost'
 import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../constants/food'
 import { containerHeight, containerWidth, hasWall } from '../constants/maze'
+import { pacmanInitialX, pacmanInitialY } from '../constants/pacman'
 
 type GameContextType = {
     containerWidth: number
@@ -32,65 +33,19 @@ export function GameProvider({children}: GameContextProviderProps) {
     const radius = 10 // radius of pacman and ghosts.
     const safeDistance = 100 // safe zone around pacman (nothing is generated in this area)
 
-    const pacmanInitialX = containerWidth / 2
-    const pacmanInitialY = containerHeight / 2
+    
 
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
     const [pacmanDirection, setPacmanDirection] = useState('')
     const [isPoweredUp, setIsPoweredUp] = useState(false)
 
-    const [ghosts, setGhosts] = useState<Ghost[]>([])
+    const [ghosts, setGhosts] = useState<Ghost[]>(initialGhosts)
 
     const [snacks, setSnacks] = useState<Food[]>([])
     const [powerUps, setPowerUps] = useState<Food[]>([])
 
     const [gameHasStarted, setGameHasStarted] = useState(false)
-
-    // Adds ghosts to the game. 1 ghost for each of the 4 personalities.
-    const generateGhosts = useCallback(() => {
-        const ghosts: Ghost[] = [{
-            id: Math.random(),
-            personality: 'red',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }, {
-            id: Math.random(),
-            personality: 'pink',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }, {
-            id: Math.random(),
-            personality: 'cyan',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }, {
-            id: Math.random(),
-            personality: 'orange',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }]
-        
-        // Create safe zone around pacman and avoid going out of bounds.
-        for (let i = 0; i < ghosts.length; i++) {
-            while ((ghosts[i].x > pacmanInitialX - safeDistance && ghosts[i].x < pacmanInitialX + safeDistance) || ghosts[i].x - radius < 0 || ghosts[i].x + radius > containerWidth) {
-                ghosts[i].x = Math.floor(Math.random() * containerWidth)
-            }
-            while ((ghosts[i].y > pacmanInitialY - safeDistance && ghosts[i].y < pacmanInitialY + safeDistance) || ghosts[i].y - radius < 0 || ghosts[i].y + radius > containerHeight) {
-                ghosts[i].y = Math.floor(Math.random() * containerWidth)
-            }
-        }
-
-        setGhosts(ghosts)
-    }, [pacmanInitialX, pacmanInitialY])
 
     // Adds snacks to the game.
     const generateSnacks = useCallback(() => {
@@ -115,7 +70,7 @@ export function GameProvider({children}: GameContextProviderProps) {
         }
 
         setSnacks(randomSnacks)
-    }, [pacmanInitialX, pacmanInitialY])
+    }, [])
 
     // Adds power-ups to the game.
     const generatePowerUps = useCallback(() => {
@@ -140,19 +95,19 @@ export function GameProvider({children}: GameContextProviderProps) {
         }
 
         setPowerUps(randomPowerUps)
-    }, [pacmanInitialX, pacmanInitialY])
+    }, [])
 
     // Resets the game.
     const reset = useCallback(() => {
         setPacmanX(pacmanInitialX)
         setPacmanY(pacmanInitialY)
 
-        generateGhosts()
+        setGhosts(initialGhosts)
         generateSnacks()
         generatePowerUps()
 
         setGameHasStarted(true)
-    }, [generateGhosts, generatePowerUps, generateSnacks, pacmanInitialX, pacmanInitialY])
+    }, [generatePowerUps, generateSnacks])
 
     // Handle when the player loses.
     const gameOver = useCallback(() => {
