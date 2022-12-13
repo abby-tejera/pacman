@@ -1,9 +1,10 @@
 import styles from '../styles/Game.module.css'
-import {Pacman} from '../components/Pacman'
-import {Ghost} from '../components/Ghost'
+import { Pacman } from '../components/Pacman'
+import { Ghost } from '../components/Ghost'
 import { useGame } from '../hooks/useGame'
 import { Snack } from '../components/Snack'
 import { PowerUp } from '../components/PowerUp'
+import { Walls } from '../components/Walls'
 
 // Game page (url: '/game')
 export default function Game() {
@@ -23,6 +24,8 @@ export default function Game() {
         width={containerWidth}
         height={containerHeight}
       >
+        <Walls />
+
         {snacks.map(snack => (
           <Snack key={snack.id} snack={snack} />
         ))}

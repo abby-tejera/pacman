@@ -1,0 +1,15 @@
+@keyframes animate-maze {
+    0%   {fill: blue;}
+    25%  {fill: red;}
+    50%  {fill: yellow;}
+    75%  {fill: green;}
+    100% {fill: blue;}
+}
+
+.wall {
+    fill: var(--stroke);
+}
+
+.empty {
+    fill: var(--empty);
+}

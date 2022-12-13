@@ -26,16 +26,16 @@ type GameContextProviderProps = {
 }
 
 export function GameProvider({children}: GameContextProviderProps) {
-    const containerWidth = 1200
-    const containerHeight = 600
+    const containerWidth = 560
+    const containerHeight = 620
 
     const ghostStep = 2 // step for ghosts
     const pacmanStep = 10 // step for pacman
-    const radius = 25 // radius of pacman and ghosts.
+    const radius = 15 // radius of pacman and ghosts.
     const safeDistance = 100 // safe zone around pacman (nothing is generated in this area)
 
-    const pacmanInitialX = 625
-    const pacmanInitialY = 325
+    const pacmanInitialX = containerWidth / 2
+    const pacmanInitialY = containerHeight / 2
 
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
@@ -49,6 +49,101 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [gameHasStarted, setGameHasStarted] = useState(false)
 
+    // Adds ghosts to the game. 1 ghost for each of the 4 personalities.
+    const generateGhosts = useCallback(() => {
+        const ghosts: Ghost[] = [{
+            id: Math.random(),
+            personality: 'red',
+            x: Math.floor(Math.random() * containerWidth),
+            y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
+        }, {
+            id: Math.random(),
+            personality: 'pink',
+            x: Math.floor(Math.random() * containerWidth),
+            y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
+        }, {
+            id: Math.random(),
+            personality: 'cyan',
+            x: Math.floor(Math.random() * containerWidth),
+            y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
+        }, {
+            id: Math.random(),
+            personality: 'orange',
+            x: Math.floor(Math.random() * containerWidth),
+            y: Math.floor(Math.random() * containerHeight),
+            targetX: pacmanInitialX,
+            targetY: pacmanInitialY,
+        }]
+        
+        // Create safe zone around pacman and avoid going out of bounds.
+        for (let i = 0; i < ghosts.length; i++) {
+            while ((ghosts[i].x > pacmanInitialX - safeDistance && ghosts[i].x < pacmanInitialX + safeDistance) || ghosts[i].x - radius < 0 || ghosts[i].x + radius > containerWidth) {
+                ghosts[i].x = Math.floor(Math.random() * containerWidth)
+            }
+            while ((ghosts[i].y > pacmanInitialY - safeDistance && ghosts[i].y < pacmanInitialY + safeDistance) || ghosts[i].y - radius < 0 || ghosts[i].y + radius > containerHeight) {
+                ghosts[i].y = Math.floor(Math.random() * containerWidth)
+            }
+        }
+
+        setGhosts(ghosts)
+    }, [pacmanInitialX, pacmanInitialY])
+
+    // Adds snacks to the game.
+    const generateSnacks = useCallback(() => {
+        const randomSnacks: Food[] = []
+        for (let i = 0; i < snacksNumber; i++) {
+            const snack = {
+                id: Math.random(),
+                // Random coordinates.
+                x: Math.floor(Math.random() * containerWidth),
+                y: Math.floor(Math.random() * containerHeight),
+            }
+
+            // Create safe zone around pacman and avoid going out of bounds.
+            while ((snack.x > pacmanInitialX - safeDistance && snack.x < pacmanInitialX + safeDistance) || snack.x - radius < 0 || snack.x + radius > containerWidth) {
+                snack.x = Math.floor(Math.random() * containerWidth)
+            }
+            while ((snack.y > pacmanInitialY - safeDistance && snack.y < pacmanInitialY + safeDistance) || snack.y - radius < 0 || snack.y + radius > containerHeight) {
+                snack.y = Math.floor(Math.random() * containerWidth)
+            }
+
+            randomSnacks.push(snack)
+        }
+
+        setSnacks(randomSnacks)
+    }, [pacmanInitialX, pacmanInitialY])
+
+    // Adds power-ups to the game.
+    const generatePowerUps = useCallback(() => {
+        const randomPowerUps: Food[] = []
+        for (let i = 0; i < powerUpsNumber; i++) {
+            const powerUps = {
+                id: Math.random(),
+                // Random coordinates.
+                x: Math.floor(Math.random() * containerWidth),
+                y: Math.floor(Math.random() * containerHeight),
+            }
+
+            // Create safe zone around pacman and avoid going out of bounds.
+            while ((powerUps.x > pacmanInitialX - safeDistance && powerUps.x < pacmanInitialX + safeDistance) || powerUps.x - radius < 0 || powerUps.x + radius > containerWidth) {
+                powerUps.x = Math.floor(Math.random() * containerWidth)
+            }
+            while ((powerUps.y > pacmanInitialY - safeDistance && powerUps.y < pacmanInitialY + safeDistance) || powerUps.y - radius < 0 || powerUps.y + radius > containerHeight) {
+                powerUps.y = Math.floor(Math.random() * containerWidth)
+            }
+
+            randomPowerUps.push(powerUps)
+        }
+
+        setPowerUps(randomPowerUps)
+    }, [pacmanInitialX, pacmanInitialY])
+
     // Resets the game.
     const reset = useCallback(() => {
         setPacmanX(pacmanInitialX)
@@ -59,7 +154,7 @@ export function GameProvider({children}: GameContextProviderProps) {
         generatePowerUps()
 
         setGameHasStarted(true)
-    }, [])
+    }, [generateGhosts, generatePowerUps, generateSnacks, pacmanInitialX, pacmanInitialY])
 
     // Handle when the player loses.
     const gameOver = useCallback(() => {
@@ -297,101 +392,6 @@ export function GameProvider({children}: GameContextProviderProps) {
             victory()
         }
     }, [gameHasStarted, snacks, victory])
-
-    // Adds ghosts to the game. 1 ghost for each of the 4 personalities.
-    function generateGhosts() {
-        const ghosts: Ghost[] = [{
-            id: Math.random(),
-            personality: 'red',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }, {
-            id: Math.random(),
-            personality: 'pink',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }, {
-            id: Math.random(),
-            personality: 'cyan',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }, {
-            id: Math.random(),
-            personality: 'orange',
-            x: Math.floor(Math.random() * containerWidth),
-            y: Math.floor(Math.random() * containerHeight),
-            targetX: pacmanInitialX,
-            targetY: pacmanInitialY,
-        }]
-        
-        // Create safe zone around pacman and avoid going out of bounds.
-        for (let i = 0; i < ghosts.length; i++) {
-            while ((ghosts[i].x > pacmanInitialX - safeDistance && ghosts[i].x < pacmanInitialX + safeDistance) || ghosts[i].x - radius < 0 || ghosts[i].x + radius > containerWidth) {
-                ghosts[i].x = Math.floor(Math.random() * containerWidth)
-            }
-            while ((ghosts[i].y > pacmanInitialY - safeDistance && ghosts[i].y < pacmanInitialY + safeDistance) || ghosts[i].y - radius < 0 || ghosts[i].y + radius > containerHeight) {
-                ghosts[i].y = Math.floor(Math.random() * containerWidth)
-            }
-        }
-
-        setGhosts(ghosts)
-    }
-
-    // Adds snacks to the game.
-    function generateSnacks() {
-        const randomSnacks: Food[] = []
-        for (let i = 0; i < snacksNumber; i++) {
-            const snack = {
-                id: Math.random(),
-                // Random coordinates.
-                x: Math.floor(Math.random() * containerWidth),
-                y: Math.floor(Math.random() * containerHeight),
-            }
-
-            // Create safe zone around pacman and avoid going out of bounds.
-            while ((snack.x > pacmanInitialX - safeDistance && snack.x < pacmanInitialX + safeDistance) || snack.x - radius < 0 || snack.x + radius > containerWidth) {
-                snack.x = Math.floor(Math.random() * containerWidth)
-            }
-            while ((snack.y > pacmanInitialY - safeDistance && snack.y < pacmanInitialY + safeDistance) || snack.y - radius < 0 || snack.y + radius > containerHeight) {
-                snack.y = Math.floor(Math.random() * containerWidth)
-            }
-
-            randomSnacks.push(snack)
-        }
-
-        setSnacks(randomSnacks)
-    }
-
-    // Adds power-ups to the game.
-    function generatePowerUps() {
-        const randomPowerUps: Food[] = []
-        for (let i = 0; i < powerUpsNumber; i++) {
-            const powerUps = {
-                id: Math.random(),
-                // Random coordinates.
-                x: Math.floor(Math.random() * containerWidth),
-                y: Math.floor(Math.random() * containerHeight),
-            }
-
-            // Create safe zone around pacman and avoid going out of bounds.
-            while ((powerUps.x > pacmanInitialX - safeDistance && powerUps.x < pacmanInitialX + safeDistance) || powerUps.x - radius < 0 || powerUps.x + radius > containerWidth) {
-                powerUps.x = Math.floor(Math.random() * containerWidth)
-            }
-            while ((powerUps.y > pacmanInitialY - safeDistance && powerUps.y < pacmanInitialY + safeDistance) || powerUps.y - radius < 0 || powerUps.y + radius > containerHeight) {
-                powerUps.y = Math.floor(Math.random() * containerWidth)
-            }
-
-            randomPowerUps.push(powerUps)
-        }
-
-        setPowerUps(randomPowerUps)
-    }
 
     // Moves pacman.
     function movePacman(direction: string) {
