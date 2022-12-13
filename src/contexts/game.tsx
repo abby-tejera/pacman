@@ -208,11 +208,13 @@ export function GameProvider({children}: GameContextProviderProps) {
     useEffect(function updateGhostsTargets() {
         setGhosts(ghosts => ghosts.map(ghost => {
             switch (ghost.personality) {
+                // Always follows pacman.
                 case 'red':
                     ghost.targetX = pacmanX
                     ghost.targetY = pacmanY
                     break;
-                    
+                
+                // Predicts pacman's future position (in a straight line) and goes there.
                 case 'pink':
                     const tilesAhead = 10
                     switch (pacmanDirection) {
@@ -222,9 +224,9 @@ export function GameProvider({children}: GameContextProviderProps) {
                             break;
 
                         case 'left':
-                                ghost.targetX = pacmanX - (2 * radius + tilesAhead * pacmanStep)
-                                ghost.targetY = pacmanY
-                                break;
+                            ghost.targetX = pacmanX - (2 * radius + tilesAhead * pacmanStep)
+                            ghost.targetY = pacmanY
+                            break;
                         
                         case 'up':
                             ghost.targetX = pacmanX
@@ -238,6 +240,47 @@ export function GameProvider({children}: GameContextProviderProps) {
                     
                         default:
                             break;
+                    }
+                    break;
+                
+                // Looks at the front of pacman, draws a vector from the red ghost to that position,
+                // doubles that vector, and goes to that location.
+                case 'cyan':
+                    const redGhost = ghosts.find(ghost => ghost.personality == 'red')
+                    if (!redGhost) {
+                        break;
+                    }
+
+                    const frontAhead = 5
+                    const pacmanFrontX = (pacmanDirection == 'right')
+                        ? pacmanX + (2 * radius + frontAhead * pacmanStep)
+                        : (pacmanDirection == 'left')
+                            ? pacmanX - (2 * radius + frontAhead * pacmanStep)
+                            : pacmanX
+                    const pacmanFrontY = (pacmanDirection == 'down')
+                        ? pacmanY + (2 * radius + frontAhead * pacmanStep)
+                        : (pacmanDirection == 'up')
+                            ? pacmanY - (2 * radius + frontAhead * pacmanStep)
+                            : pacmanY
+                    
+                    const vectorX = pacmanFrontX - redGhost.x
+                    const vectorY = pacmanFrontY - redGhost.y
+
+                    ghost.targetX = redGhost.x + 2 * vectorX
+                    ghost.targetY = redGhost.y + 2 * vectorY
+                    break;
+                
+                // Follows pacman until they are at a minimum distance, then it runs away.
+                case 'orange':
+                    const minDistance = 20;
+                    if (Math.abs(pacmanX - ghost.x) < (2 * radius + minDistance * pacmanStep) && Math.abs(pacmanY - ghost.y) < (2 * radius + minDistance * pacmanStep)) {
+                        // Run.
+                        ghost.targetX = 0
+                        ghost.targetY = containerHeight
+                    } else {
+                        // Follow.
+                        ghost.targetX = pacmanX
+                        ghost.targetY = pacmanY
                     }
                     break;
             
