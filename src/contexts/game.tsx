@@ -2,8 +2,8 @@ import {ReactNode, useEffect, useState, useCallback} from 'react'
 import {createContext} from 'react'
 
 import { Ghost, initialGhosts } from '../constants/ghost'
-import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../constants/food'
-import { containerHeight, containerWidth, hasWall } from '../constants/maze'
+import { Food, snackRadius, powerUpProbability } from '../constants/food'
+import { containerHeight, containerWidth, gridSize, hasFood, hasWall } from '../constants/maze'
 import { pacmanInitialX, pacmanInitialY } from '../constants/pacman'
 
 type GameContextType = {
@@ -31,9 +31,6 @@ export function GameProvider({children}: GameContextProviderProps) {
     const ghostStep = 2 // step for ghosts
     const pacmanStep = 5 // step for pacman
     const radius = 10 // radius of pacman and ghosts.
-    const safeDistance = 100 // safe zone around pacman (nothing is generated in this area)
-
-    
 
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
@@ -47,54 +44,33 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [gameHasStarted, setGameHasStarted] = useState(false)
 
-    // Adds snacks to the game.
-    const generateSnacks = useCallback(() => {
-        const randomSnacks: Food[] = []
-        for (let i = 0; i < snacksNumber; i++) {
-            const snack = {
-                id: Math.random(),
-                // Random coordinates.
-                x: Math.floor(Math.random() * containerWidth),
-                y: Math.floor(Math.random() * containerHeight),
-            }
+    // Adds snacks and power-ups to the game.
+    const generateFood = useCallback(() => {
+        const snacks: Food[] = []
+        const powerUps: Food[] = []
 
-            // Create safe zone around pacman and avoid going out of bounds.
-            while ((snack.x > pacmanInitialX - safeDistance && snack.x < pacmanInitialX + safeDistance) || snack.x - radius < 0 || snack.x + radius > containerWidth) {
-                snack.x = Math.floor(Math.random() * containerWidth)
-            }
-            while ((snack.y > pacmanInitialY - safeDistance && snack.y < pacmanInitialY + safeDistance) || snack.y - radius < 0 || snack.y + radius > containerHeight) {
-                snack.y = Math.floor(Math.random() * containerWidth)
-            }
+        for (let i = 0; i < containerWidth / gridSize; i++) {
+            for (let j = 0; j < containerHeight / gridSize; j++) {
+                if (!hasFood(i, j)) {
+                    continue
+                }
 
-            randomSnacks.push(snack)
+                const food = {
+                    id: Math.random(),
+                    x: i * gridSize,
+                    y: j * gridSize,
+                }
+
+                if (Math.random() < powerUpProbability) {
+                    powerUps.push(food)
+                } else {
+                    snacks.push(food)
+                }
+            }
         }
 
-        setSnacks(randomSnacks)
-    }, [])
-
-    // Adds power-ups to the game.
-    const generatePowerUps = useCallback(() => {
-        const randomPowerUps: Food[] = []
-        for (let i = 0; i < powerUpsNumber; i++) {
-            const powerUps = {
-                id: Math.random(),
-                // Random coordinates.
-                x: Math.floor(Math.random() * containerWidth),
-                y: Math.floor(Math.random() * containerHeight),
-            }
-
-            // Create safe zone around pacman and avoid going out of bounds.
-            while ((powerUps.x > pacmanInitialX - safeDistance && powerUps.x < pacmanInitialX + safeDistance) || powerUps.x - radius < 0 || powerUps.x + radius > containerWidth) {
-                powerUps.x = Math.floor(Math.random() * containerWidth)
-            }
-            while ((powerUps.y > pacmanInitialY - safeDistance && powerUps.y < pacmanInitialY + safeDistance) || powerUps.y - radius < 0 || powerUps.y + radius > containerHeight) {
-                powerUps.y = Math.floor(Math.random() * containerWidth)
-            }
-
-            randomPowerUps.push(powerUps)
-        }
-
-        setPowerUps(randomPowerUps)
+        setSnacks(snacks)
+        setPowerUps(powerUps)
     }, [])
 
     // Resets the game.
@@ -103,11 +79,10 @@ export function GameProvider({children}: GameContextProviderProps) {
         setPacmanY(pacmanInitialY)
 
         setGhosts(initialGhosts)
-        generateSnacks()
-        generatePowerUps()
+        generateFood()
 
         setGameHasStarted(true)
-    }, [generatePowerUps, generateSnacks])
+    }, [generateFood])
 
     // Handle when the player loses.
     const gameOver = useCallback(() => {

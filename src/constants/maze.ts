@@ -52,19 +52,14 @@ export function hasWall(x: number, y: number) {
     const i = Math.floor(y / gridSize)
     const j = Math.floor(x / gridSize)
     
-    console.log(`gridSize = ${gridSize}`)
-    console.log(`wallDistribution[${i}][${j}] = ${wallDistribution[i][j]}`)
     return wallDistribution[i][j] == 1
 }
 
-export function hasFood(x: number, y: number) {
+export function hasFood(i: number, j: number) {
     // Out of the board.
-    if (x < 0 || x > containerWidth || y < 0 || y > containerHeight) {
-        return true
+    if (i < 0 || i > containerWidth / gridSize || j < 0 || j > containerHeight / gridSize) {
+        return false
     }
 
-    const i = Math.floor(y / gridSize)
-    const j = Math.floor(x / gridSize)
-
-    return wallDistribution[i][j] == 1
+    return wallDistribution[j][i] == 2
 }

@@ -6,5 +6,5 @@ export type Food = {
 
 export const snackRadius = 2
 export const powerUpRadius = 6
-export const snacksNumber = 20
-export const powerUpsNumber = 2
+
+export const powerUpProbability = 0.01 // 1%
