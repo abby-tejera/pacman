@@ -5,35 +5,31 @@ import { useGame } from '../hooks/useGame'
 
 export function Pacman() {
     const {
-        containerWidth,
-        containerHeight,
         pacmanX: x,
         pacmanY: y,
-        setPacmanX: setX,
-        setPacmanY: setY,
-        pacmanStep,
-        radius
+        movePacman,
+        radius,
     } = useGame()
 
     // Performing action on first page load.
     useEffect(() => {
         // Handle Pacman's movement. Checks if the next position goes over the border and prevents it.
-        function movePacman(key: string) {
-            switch (key) {
-            case "ArrowDown":
-                setY(y => (y + pacmanStep + radius <= containerHeight) ? y + pacmanStep : y);
+        function handleKeyEvent(event: KeyboardEvent) {
+            switch (event.key) {
+            case 'ArrowDown':
+                movePacman('down')
                 break;
             
-            case "ArrowUp":
-                setY(y => (y - pacmanStep - radius >= 0) ? y - pacmanStep : y);
+            case 'ArrowUp':
+                movePacman('up')
                 break;
 
-            case "ArrowLeft":
-                setX(x => (x - pacmanStep - radius >= 0) ? x - pacmanStep : x);
+            case 'ArrowLeft':
+                movePacman('left')
                 break;
 
-            case "ArrowRight":
-                setX(x => (x + pacmanStep + radius <= containerWidth) ? x + pacmanStep : x);
+            case 'ArrowRight':
+                movePacman('right')
                 break;
             
             // If user didn't press arrow keys, ignore.
@@ -42,15 +38,13 @@ export function Pacman() {
             }
         }
 
-        // Calling movePacman every time any key is pressed.
-        document.addEventListener("keydown", (e) => {
-            movePacman(e.key)
-        });
+        // Calling handleKeyEvent every time any key is pressed.
+        document.addEventListener("keydown", handleKeyEvent);
 
         return () => {
-            document.removeEventListener("keydown", () => {});
+            document.removeEventListener("keydown", handleKeyEvent);
         }
-    }, [setX, setY, containerWidth, containerHeight, pacmanStep, radius])
+    }, [movePacman])
 
     return (
         <circle className={styles.pacman} cx={x} cy={y} r={radius} />

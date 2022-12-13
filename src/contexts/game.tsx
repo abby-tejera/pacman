@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useState, Dispatch, SetStateAction, useCallback, use} from 'react'
+import {ReactNode, useEffect, useState, useCallback} from 'react'
 import {createContext} from 'react'
 
 import { Ghost } from '../types/ghost'
@@ -7,16 +7,12 @@ import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../types/food'
 type GameContextType = {
     containerWidth: number
     containerHeight: number
-
-    ghostStep: number
-    pacmanStep: number
     radius: number
 
     pacmanX: number
     pacmanY: number
-    setPacmanX: Dispatch<SetStateAction<number>>
-    setPacmanY: Dispatch<SetStateAction<number>>
     isPoweredUp: boolean
+    movePacman: (direction: string) => void
 
     ghosts: Ghost[]
     snacks: Food[]
@@ -34,7 +30,7 @@ export function GameProvider({children}: GameContextProviderProps) {
     const containerHeight = 600
 
     const ghostStep = 2 // step for ghosts
-    const pacmanStep = 7 // step for pacman
+    const pacmanStep = 10 // step for pacman
     const radius = 25 // radius of pacman and ghosts.
     const safeDistance = 100 // safe zone around pacman (nothing is generated in this area)
 
@@ -43,6 +39,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
+    const [pacmanDirection, setPacmanDirection] = useState('')
     const [isPoweredUp, setIsPoweredUp] = useState(false)
 
     const [ghosts, setGhosts] = useState<Ghost[]>([])
@@ -215,6 +212,34 @@ export function GameProvider({children}: GameContextProviderProps) {
                     ghost.targetX = pacmanX
                     ghost.targetY = pacmanY
                     break;
+                    
+                case 'pink':
+                    const tilesAhead = 10
+                    switch (pacmanDirection) {
+                        case 'right':
+                            ghost.targetX = pacmanX + (2 * radius + tilesAhead * pacmanStep)
+                            ghost.targetY = pacmanY
+                            break;
+
+                        case 'left':
+                                ghost.targetX = pacmanX - (2 * radius + tilesAhead * pacmanStep)
+                                ghost.targetY = pacmanY
+                                break;
+                        
+                        case 'up':
+                            ghost.targetX = pacmanX
+                            ghost.targetY = pacmanY - (2 * radius + tilesAhead * pacmanStep)
+                            break;
+                        
+                        case 'down':
+                            ghost.targetX = pacmanX
+                            ghost.targetY = pacmanY + (2 * radius + tilesAhead * pacmanStep)
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                    break;
             
                 default:
                     break;
@@ -222,7 +247,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
             return ghost
         }))
-    }, [pacmanX, pacmanY])
+    }, [pacmanDirection, pacmanX, pacmanY])
 
     useEffect(() => {
         if (gameHasStarted && snacks.length == 0) {
@@ -324,20 +349,44 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         setPowerUps(randomPowerUps)
     }
+
+    // Moves pacman.
+    function movePacman(direction: string) {
+        setPacmanDirection(direction)
+
+        switch (direction) {
+            case 'down':
+                setPacmanY(y => (y + pacmanStep + radius <= containerHeight) ? y + pacmanStep : y);
+                break;
+            
+            case 'up':
+                setPacmanY(y => (y - pacmanStep - radius >= 0) ? y - pacmanStep : y);
+                break;
+
+            case 'left':
+                setPacmanX(x => (x - pacmanStep - radius >= 0) ? x - pacmanStep : x);
+                break;
+
+            case 'right':
+                setPacmanX(x => (x + pacmanStep + radius <= containerWidth) ? x + pacmanStep : x);
+                break;
+            
+            // If it is invalid, ignore.
+            default:
+                break;
+        }
+    }
     
     return (
         <GameContext.Provider
             value={{
                 containerWidth,
                 containerHeight,
-                ghostStep,
-                pacmanStep,
                 radius,
                 pacmanX,
-                setPacmanX,
                 pacmanY,
-                setPacmanY,
                 isPoweredUp,
+                movePacman,
                 ghosts,
                 snacks,
                 powerUps,

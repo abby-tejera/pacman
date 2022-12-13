@@ -1,23 +1,24 @@
 .ghost {
 	stroke-width: 0;
+	transform: translate(-25px, -25px);
 
 	transition: x 0.1s, y 0.1s;
 }
 
 .red {
-	fill: red
+	fill: red;
 }
 
 .pink {
-	fill: pink
+	fill: pink;
 }
 
 .cyan {
-	fill: cyan
+	fill: cyan;
 }
 
 .orange {
-	fill: orange
+	fill: orange;
 }
 
 .weakened {
