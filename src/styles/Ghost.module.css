@@ -1,6 +1,6 @@
 .ghost {
 	stroke-width: 0;
-	transform: translate(-25px, -25px);
+	transform: translate(-9px, -9px);
 
 	transition: x 0.1s, y 0.1s;
 }

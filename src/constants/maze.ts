@@ -42,17 +42,31 @@ export const mazeDistribution = [
 ]
 
 export const gridSize = Math.round(containerHeight / mazeDistribution.length)
+export const entityRadius = 9 // radius of pacman and ghosts.
 
-export function hasWall(x: number, y: number) {
-    // Out of the board.
-    if (x < 0 || x > containerWidth || y < 0 || y > containerHeight) {
-        return true
+// Checks if an entity (pacman or ghost) would not be allowed to go the given position because of a wall.
+export function hasWall(centerX: number, centerY: number) {
+    function pointHasWall(pointX: number, pointY: number) {
+        // Out of the board.
+        if (pointX < 0 || pointX > containerWidth || pointY < 0 || pointY > containerHeight) {
+            return true
+        }
+
+        const i = Math.floor(pointY / gridSize)
+        const j = Math.floor(pointX / gridSize)
+        
+        return mazeDistribution[i][j] == 1
     }
 
-    const i = Math.floor(y / gridSize)
-    const j = Math.floor(x / gridSize)
-    
-    return mazeDistribution[i][j] == 1
+    let result = false
+
+    for (let pointX = centerX - entityRadius; pointX <= centerX + entityRadius; pointX++) {
+        for (let pointY = centerY - entityRadius; pointY <= centerY + entityRadius; pointY++) {
+            result = result || pointHasWall(pointX, pointY)
+        }
+    }
+
+    return result
 }
 
 export function hasFood(i: number, j: number) {

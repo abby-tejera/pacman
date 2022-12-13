@@ -3,13 +3,12 @@ import {createContext} from 'react'
 
 import { Ghost, initialGhosts } from '../constants/ghost'
 import { Food, snackRadius, powerUpProbability } from '../constants/food'
-import { containerHeight, containerWidth, gridSize, hasFood, hasWall } from '../constants/maze'
+import { containerHeight, containerWidth, gridSize, hasFood, hasWall, entityRadius } from '../constants/maze'
 import { pacmanInitialX, pacmanInitialY } from '../constants/pacman'
 
 type GameContextType = {
     containerWidth: number
     containerHeight: number
-    radius: number
 
     pacmanX: number
     pacmanY: number
@@ -30,7 +29,6 @@ type GameContextProviderProps = {
 export function GameProvider({children}: GameContextProviderProps) {
     const ghostStep = 2 // step for ghosts
     const pacmanStep = 5 // step for pacman
-    const radius = 10 // radius of pacman and ghosts.
 
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
@@ -57,8 +55,8 @@ export function GameProvider({children}: GameContextProviderProps) {
 
                 const food = {
                     id: Math.random(),
-                    x: i * gridSize,
-                    y: j * gridSize,
+                    x: i * gridSize + gridSize / 2,
+                    y: j * gridSize + gridSize / 2,
                 }
 
                 if (Math.random() < powerUpProbability) {
@@ -100,16 +98,16 @@ export function GameProvider({children}: GameContextProviderProps) {
     // Check if ghosts are eating pacman (if the user lost).
     useEffect(function checkIfLost() {
         // Square that represents Pacman's position.
-        const left = pacmanX - radius;
-        const right = pacmanX + radius;
-        const top = pacmanY - radius;
-        const bottom = pacmanY + radius;
+        const left = pacmanX - entityRadius;
+        const right = pacmanX + entityRadius;
+        const top = pacmanY - entityRadius;
+        const bottom = pacmanY + entityRadius;
 
         for (let ghost of ghosts) {
-            const ghostLeft = ghost.x - radius;
-            const ghostRight = ghost.x + radius;
-            const ghostTop = ghost.y - radius;
-            const ghostBottom = ghost.y + radius;
+            const ghostLeft = ghost.x - entityRadius;
+            const ghostRight = ghost.x + entityRadius;
+            const ghostTop = ghost.y - entityRadius;
+            const ghostBottom = ghost.y + entityRadius;
 
             // If ghost is not touching pacman, continue to the next one.
             if ((ghostRight < left || ghostLeft > right) ||
@@ -132,10 +130,10 @@ export function GameProvider({children}: GameContextProviderProps) {
     // Check if pacman is eating food.
     useEffect(function checkIfEaten() {
         // Square that represents Pacman's position.
-        const left = pacmanX - radius;
-        const right = pacmanX + radius;
-        const top = pacmanY - radius;
-        const bottom = pacmanY + radius;
+        const left = pacmanX - entityRadius;
+        const right = pacmanX + entityRadius;
+        const top = pacmanY - entityRadius;
+        const bottom = pacmanY + entityRadius;
 
         // Remove eaten snacks.
         setSnacks(snacks => snacks.filter(snack => {
@@ -177,16 +175,16 @@ export function GameProvider({children}: GameContextProviderProps) {
         const interval = setInterval(() => {
             setGhosts(ghosts => ghosts.map(ghost => {
                 // Choose new x value. Make sure that we don't go over the walls.
-                if (ghost.x < ghost.targetX && !hasWall(ghost.x + ghostStep + radius, ghost.y)) {
+                if (ghost.x < ghost.targetX && !hasWall(ghost.x + ghostStep, ghost.y)) {
                     ghost.x = ghost.x + ghostStep
-                } else if (ghost.x > ghost.targetX && !hasWall(ghost.x - ghostStep - radius, ghost.y)) {
+                } else if (ghost.x > ghost.targetX && !hasWall(ghost.x - ghostStep, ghost.y)) {
                     ghost.x = ghost.x - ghostStep
                 }
     
                 // Choose new y value. Make sure that we don't go over the walls.
-                if (ghost.y < ghost.targetY && !hasWall(ghost.x, ghost.y + ghostStep + radius)) {
+                if (ghost.y < ghost.targetY && !hasWall(ghost.x, ghost.y + ghostStep)) {
                     ghost.y = ghost.y + ghostStep
-                } else if (ghost.y > ghost.targetY && !hasWall(ghost.x, ghost.y - ghostStep - radius)) {
+                } else if (ghost.y > ghost.targetY && !hasWall(ghost.x, ghost.y - ghostStep)) {
                     ghost.y = ghost.y - ghostStep
                 }
                  
@@ -214,23 +212,23 @@ export function GameProvider({children}: GameContextProviderProps) {
                     const tilesAhead = 10
                     switch (pacmanDirection) {
                         case 'right':
-                            ghost.targetX = pacmanX + (2 * radius + tilesAhead * pacmanStep)
+                            ghost.targetX = pacmanX + (2 * entityRadius + tilesAhead * pacmanStep)
                             ghost.targetY = pacmanY
                             break;
 
                         case 'left':
-                            ghost.targetX = pacmanX - (2 * radius + tilesAhead * pacmanStep)
+                            ghost.targetX = pacmanX - (2 * entityRadius + tilesAhead * pacmanStep)
                             ghost.targetY = pacmanY
                             break;
                         
                         case 'up':
                             ghost.targetX = pacmanX
-                            ghost.targetY = pacmanY - (2 * radius + tilesAhead * pacmanStep)
+                            ghost.targetY = pacmanY - (2 * entityRadius + tilesAhead * pacmanStep)
                             break;
                         
                         case 'down':
                             ghost.targetX = pacmanX
-                            ghost.targetY = pacmanY + (2 * radius + tilesAhead * pacmanStep)
+                            ghost.targetY = pacmanY + (2 * entityRadius + tilesAhead * pacmanStep)
                             break;
                     
                         default:
@@ -248,14 +246,14 @@ export function GameProvider({children}: GameContextProviderProps) {
 
                     const frontAhead = 5
                     const pacmanFrontX = (pacmanDirection == 'right')
-                        ? pacmanX + (2 * radius + frontAhead * pacmanStep)
+                        ? pacmanX + (2 * entityRadius + frontAhead * pacmanStep)
                         : (pacmanDirection == 'left')
-                            ? pacmanX - (2 * radius + frontAhead * pacmanStep)
+                            ? pacmanX - (2 * entityRadius + frontAhead * pacmanStep)
                             : pacmanX
                     const pacmanFrontY = (pacmanDirection == 'down')
-                        ? pacmanY + (2 * radius + frontAhead * pacmanStep)
+                        ? pacmanY + (2 * entityRadius + frontAhead * pacmanStep)
                         : (pacmanDirection == 'up')
-                            ? pacmanY - (2 * radius + frontAhead * pacmanStep)
+                            ? pacmanY - (2 * entityRadius + frontAhead * pacmanStep)
                             : pacmanY
                     
                     const vectorX = pacmanFrontX - redGhost.x
@@ -268,7 +266,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                 // Follows pacman until they are at a minimum distance, then it runs away.
                 case 'orange':
                     const minDistance = 20;
-                    if (Math.abs(pacmanX - ghost.x) < (2 * radius + minDistance * pacmanStep) && Math.abs(pacmanY - ghost.y) < (2 * radius + minDistance * pacmanStep)) {
+                    if (Math.abs(pacmanX - ghost.x) < (2 * entityRadius + minDistance * pacmanStep) && Math.abs(pacmanY - ghost.y) < (2 * entityRadius + minDistance * pacmanStep)) {
                         // Run.
                         ghost.targetX = 0
                         ghost.targetY = containerHeight
@@ -303,20 +301,19 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         switch (direction) {
             case 'down':
-                // setPacmanY(y => (y + pacmanStep + radius <= containerHeight) ? y + pacmanStep : y);
-                setPacmanY(y => !hasWall(pacmanX, y + pacmanStep + radius) ? y + pacmanStep : y);
+                setPacmanY(y => !hasWall(pacmanX, y + pacmanStep) ? y + pacmanStep : y);
                 break;
             
             case 'up':
-                setPacmanY(y => !hasWall(pacmanX, y - pacmanStep - radius) ? y - pacmanStep : y);
+                setPacmanY(y => !hasWall(pacmanX, y - pacmanStep) ? y - pacmanStep : y);
                 break;
 
             case 'left':
-                setPacmanX(x => !hasWall(x - pacmanStep - radius, pacmanY) ? x - pacmanStep : x);
+                setPacmanX(x => !hasWall(x - pacmanStep, pacmanY) ? x - pacmanStep : x);
                 break;
 
             case 'right':
-                setPacmanX(x => !hasWall(x + pacmanStep + radius, pacmanY) ? x + pacmanStep : x);
+                setPacmanX(x => !hasWall(x + pacmanStep, pacmanY) ? x + pacmanStep : x);
                 break;
             
             // If it is invalid, ignore.
@@ -330,7 +327,6 @@ export function GameProvider({children}: GameContextProviderProps) {
             value={{
                 containerWidth,
                 containerHeight,
-                radius,
                 pacmanX,
                 pacmanY,
                 isPoweredUp,

@@ -1,14 +1,14 @@
-import { useEffect, Dispatch, SetStateAction } from 'react'
+import { useEffect } from 'react'
 
 import styles from '../styles/Pacman.module.css'
 import { useGame } from '../hooks/useGame'
+import { entityRadius } from '../constants/maze'
 
 export function Pacman() {
     const {
         pacmanX: x,
         pacmanY: y,
         movePacman,
-        radius,
     } = useGame()
 
     // Performing action on first page load.
@@ -47,6 +47,6 @@ export function Pacman() {
     }, [movePacman])
 
     return (
-        <circle className={styles.pacman} cx={x} cy={y} r={radius} />
+        <circle className={styles.pacman} cx={x} cy={y} r={entityRadius} />
     )
 }

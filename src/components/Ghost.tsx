@@ -1,13 +1,14 @@
 import styles from '../styles/Ghost.module.css'
 import { useGame } from '../hooks/useGame'
 import { Ghost as GhostType } from '../constants/ghost'
+import { entityRadius } from '../constants/maze'
 
 type Props = {
     ghost: GhostType
 }
 
 export function Ghost({ghost}: Props) {
-    const {radius, isPoweredUp} = useGame()
+    const {isPoweredUp} = useGame()
 
     return (
         <rect
@@ -18,8 +19,8 @@ export function Ghost({ghost}: Props) {
             `}
             x={ghost.x}
             y={ghost.y}
-            width={2 * radius}
-            height={2 * radius}
+            width={2 * entityRadius}
+            height={2 * entityRadius}
         />
     )
 }
