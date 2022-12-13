@@ -1,6 +1,8 @@
 import { gridSize } from "./maze"
 import { pacmanInitialX, pacmanInitialY } from "./pacman"
 
+export const ghostStep = 2 
+
 export type Ghost = {
     id: number
     x: number

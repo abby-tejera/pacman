@@ -1,10 +1,11 @@
 import {ReactNode, useEffect, useState, useCallback} from 'react'
 import {createContext} from 'react'
 
-import { Ghost, initialGhosts } from '../constants/ghost'
+import { Ghost, initialGhosts, ghostStep } from '../constants/ghost'
 import { Food, snackRadius, powerUpProbability } from '../constants/food'
-import { containerHeight, containerWidth, gridSize, hasFood, hasWall, entityRadius } from '../constants/maze'
-import { pacmanInitialX, pacmanInitialY } from '../constants/pacman'
+import { containerHeight, containerWidth, gridSize, entityRadius, mazeDistribution } from '../constants/maze'
+import { pacmanInitialX, pacmanInitialY, pacmanStep } from '../constants/pacman'
+import { isAllowedEntityPosition } from '../utils/isAllowedEntityPosition'
 
 type GameContextType = {
     containerWidth: number
@@ -27,9 +28,6 @@ type GameContextProviderProps = {
 }
 
 export function GameProvider({children}: GameContextProviderProps) {
-    const ghostStep = 2 // step for ghosts
-    const pacmanStep = 5 // step for pacman
-
     const [pacmanX, setPacmanX] = useState(pacmanInitialX)
     const [pacmanY, setPacmanY] = useState(pacmanInitialY)
     const [pacmanDirection, setPacmanDirection] = useState('')
@@ -49,7 +47,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         for (let i = 0; i < containerWidth / gridSize; i++) {
             for (let j = 0; j < containerHeight / gridSize; j++) {
-                if (!hasFood(i, j)) {
+                if (mazeDistribution[j][i] != 2) {
                     continue
                 }
 
@@ -175,16 +173,16 @@ export function GameProvider({children}: GameContextProviderProps) {
         const interval = setInterval(() => {
             setGhosts(ghosts => ghosts.map(ghost => {
                 // Choose new x value. Make sure that we don't go over the walls.
-                if (ghost.x < ghost.targetX && !hasWall(ghost.x + ghostStep, ghost.y)) {
+                if (ghost.x < ghost.targetX && isAllowedEntityPosition(ghost.x + ghostStep, ghost.y)) {
                     ghost.x = ghost.x + ghostStep
-                } else if (ghost.x > ghost.targetX && !hasWall(ghost.x - ghostStep, ghost.y)) {
+                } else if (ghost.x > ghost.targetX && isAllowedEntityPosition(ghost.x - ghostStep, ghost.y)) {
                     ghost.x = ghost.x - ghostStep
                 }
     
                 // Choose new y value. Make sure that we don't go over the walls.
-                if (ghost.y < ghost.targetY && !hasWall(ghost.x, ghost.y + ghostStep)) {
+                if (ghost.y < ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y + ghostStep)) {
                     ghost.y = ghost.y + ghostStep
-                } else if (ghost.y > ghost.targetY && !hasWall(ghost.x, ghost.y - ghostStep)) {
+                } else if (ghost.y > ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y - ghostStep)) {
                     ghost.y = ghost.y - ghostStep
                 }
                  
@@ -301,19 +299,19 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         switch (direction) {
             case 'down':
-                setPacmanY(y => !hasWall(pacmanX, y + pacmanStep) ? y + pacmanStep : y);
+                setPacmanY(y => isAllowedEntityPosition(pacmanX, y + pacmanStep) ? y + pacmanStep : y);
                 break;
             
             case 'up':
-                setPacmanY(y => !hasWall(pacmanX, y - pacmanStep) ? y - pacmanStep : y);
+                setPacmanY(y => isAllowedEntityPosition(pacmanX, y - pacmanStep) ? y - pacmanStep : y);
                 break;
 
             case 'left':
-                setPacmanX(x => !hasWall(x - pacmanStep, pacmanY) ? x - pacmanStep : x);
+                setPacmanX(x => isAllowedEntityPosition(x - pacmanStep, pacmanY) ? x - pacmanStep : x);
                 break;
 
             case 'right':
-                setPacmanX(x => !hasWall(x + pacmanStep, pacmanY) ? x + pacmanStep : x);
+                setPacmanX(x => isAllowedEntityPosition(x + pacmanStep, pacmanY) ? x + pacmanStep : x);
                 break;
             
             // If it is invalid, ignore.
