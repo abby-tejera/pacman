@@ -3,6 +3,7 @@ import {createContext} from 'react'
 
 import { Ghost } from '../types/ghost'
 import { Food, powerUpsNumber, snackRadius, snacksNumber } from '../types/food'
+import { containerHeight, containerWidth, hasWall } from '../constants/maze'
 
 type GameContextType = {
     containerWidth: number
@@ -26,12 +27,9 @@ type GameContextProviderProps = {
 }
 
 export function GameProvider({children}: GameContextProviderProps) {
-    const containerWidth = 560
-    const containerHeight = 620
-
     const ghostStep = 2 // step for ghosts
-    const pacmanStep = 10 // step for pacman
-    const radius = 15 // radius of pacman and ghosts.
+    const pacmanStep = 5 // step for pacman
+    const radius = 10 // radius of pacman and ghosts.
     const safeDistance = 100 // safe zone around pacman (nothing is generated in this area)
 
     const pacmanInitialX = containerWidth / 2
@@ -276,17 +274,17 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         const interval = setInterval(() => {
             setGhosts(ghosts => ghosts.map(ghost => {
-                // Choose new x value. Make sure that we don't go over the borders.
-                if (ghost.x < ghost.targetX && ghost.x + ghostStep + radius <= containerWidth) {
+                // Choose new x value. Make sure that we don't go over the walls.
+                if (ghost.x < ghost.targetX && !hasWall(ghost.x + ghostStep + radius, ghost.y)) {
                     ghost.x = ghost.x + ghostStep
-                } else if (ghost.x > ghost.targetX && ghost.x - ghostStep - radius >= 0) {
+                } else if (ghost.x > ghost.targetX && !hasWall(ghost.x - ghostStep - radius, ghost.y)) {
                     ghost.x = ghost.x - ghostStep
                 }
     
-                // Choose new y value. Make sure that we don't go over the borders.
-                if (ghost.y < ghost.targetY && ghost.y + ghostStep + radius <= containerHeight) {
+                // Choose new y value. Make sure that we don't go over the walls.
+                if (ghost.y < ghost.targetY && !hasWall(ghost.x, ghost.y + ghostStep + radius)) {
                     ghost.y = ghost.y + ghostStep
-                } else if (ghost.y > ghost.targetY && ghost.y - ghostStep - radius >= 0) {
+                } else if (ghost.y > ghost.targetY && !hasWall(ghost.x, ghost.y - ghostStep - radius)) {
                     ghost.y = ghost.y - ghostStep
                 }
                  
@@ -399,19 +397,20 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         switch (direction) {
             case 'down':
-                setPacmanY(y => (y + pacmanStep + radius <= containerHeight) ? y + pacmanStep : y);
+                // setPacmanY(y => (y + pacmanStep + radius <= containerHeight) ? y + pacmanStep : y);
+                setPacmanY(y => !hasWall(pacmanX, y + pacmanStep + radius) ? y + pacmanStep : y);
                 break;
             
             case 'up':
-                setPacmanY(y => (y - pacmanStep - radius >= 0) ? y - pacmanStep : y);
+                setPacmanY(y => !hasWall(pacmanX, y - pacmanStep - radius) ? y - pacmanStep : y);
                 break;
 
             case 'left':
-                setPacmanX(x => (x - pacmanStep - radius >= 0) ? x - pacmanStep : x);
+                setPacmanX(x => !hasWall(x - pacmanStep - radius, pacmanY) ? x - pacmanStep : x);
                 break;
 
             case 'right':
-                setPacmanX(x => (x + pacmanStep + radius <= containerWidth) ? x + pacmanStep : x);
+                setPacmanX(x => !hasWall(x + pacmanStep + radius, pacmanY) ? x + pacmanStep : x);
                 break;
             
             // If it is invalid, ignore.

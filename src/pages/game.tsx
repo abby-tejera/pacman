@@ -5,6 +5,7 @@ import { useGame } from '../hooks/useGame'
 import { Snack } from '../components/Snack'
 import { PowerUp } from '../components/PowerUp'
 import { Walls } from '../components/Walls'
+import { gridSize, wallDistribution } from '../constants/maze'
 
 // Game page (url: '/game')
 export default function Game() {
@@ -39,6 +40,11 @@ export default function Game() {
         {ghosts.map(ghost => (
           <Ghost key={ghost.id} ghost={ghost} />
         ))}
+
+        {/* Uncomment to see wall distribution (only for developer use). */}
+        {/* {wallDistribution.map((row, j) => row.map((n, i) => (
+          <rect key={`${i},${j}`} x={i*gridSize} y={j*gridSize} width={gridSize} height={gridSize} fill={n == 1 ? 'red' : 'green'} fillOpacity={0.5} />
+        )))} */}
       </svg>
     </div>
   )
