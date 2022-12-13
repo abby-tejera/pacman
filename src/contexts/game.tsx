@@ -92,8 +92,13 @@ export function GameProvider({children}: GameContextProviderProps) {
         reset()
     }, [reset])
 
+    // Start game.
+    useEffect(function start() {
+        reset()
+    }, [reset])
+
     // Check if ghosts are eating pacman (if the user lost).
-    const checkIfLost = useCallback(() => {
+    useEffect(function checkIfLost() {
         // Square that represents Pacman's position.
         const left = pacmanX - radius;
         const right = pacmanX + radius;
@@ -122,10 +127,10 @@ export function GameProvider({children}: GameContextProviderProps) {
             // If ghost is touching pacman, the game is lost.
             gameOver()
         }
-    }, [gameOver, ghosts, pacmanX, pacmanY, isPoweredUp])
+    }, [pacmanX, pacmanY, ghosts, isPoweredUp, gameOver])
 
-    // Check if pacman is eating a snack.
-    const checkIfEaten = useCallback(() => {
+    // Check if pacman is eating food.
+    useEffect(function checkIfEaten() {
         // Square that represents Pacman's position.
         const left = pacmanX - radius;
         const right = pacmanX + radius;
@@ -142,17 +147,8 @@ export function GameProvider({children}: GameContextProviderProps) {
             // True if not eaten, and false if eaten.
             return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
         }))
-    }, [pacmanX, pacmanY])
 
-    // Check if pacman is eating a snack.
-    const checkIfPoweredUp = useCallback(() => {
-        // Square that represents Pacman's position.
-        const left = pacmanX - radius;
-        const right = pacmanX + radius;
-        const top = pacmanY - radius;
-        const bottom = pacmanY + radius;
-
-        // Remove eaten snacks.
+        // Remove eaten power-ups.
         setPowerUps(powerUps => powerUps.filter(powerUp => {
             const snackLeft = powerUp.x - snackRadius;
             const snackRight = powerUp.x + snackRadius;
@@ -173,30 +169,6 @@ export function GameProvider({children}: GameContextProviderProps) {
            return notPoweredUp
         }))
     }, [pacmanX, pacmanY])
-
-    // Handle when the player wins.
-    const victory = useCallback(() => {
-        setGameHasStarted(false)
-
-        alert("You won!!!!!")
-        reset()
-    }, [reset])
-
-    useEffect(() => {
-        reset()
-    }, [reset])
-
-    useEffect(() => {
-        checkIfLost()
-    }, [checkIfLost])
-
-    useEffect(() => {
-        checkIfEaten()
-    }, [checkIfEaten])
-
-    useEffect(() => {
-        checkIfPoweredUp()
-    }, [checkIfPoweredUp])
 
     // Moves ghosts in the direction of their targets.
     useEffect(function moveGhosts() {
@@ -315,11 +287,15 @@ export function GameProvider({children}: GameContextProviderProps) {
         }))
     }, [pacmanDirection, pacmanX, pacmanY])
 
-    useEffect(() => {
+    // Handle when the player wins.
+    useEffect(function victory() {
         if (gameHasStarted && snacks.length == 0) {
-            victory()
+            setGameHasStarted(false)
+
+            alert("You won!!!!!")
+            reset()
         }
-    }, [gameHasStarted, snacks, victory])
+    }, [gameHasStarted, reset, snacks])
 
     // Moves pacman.
     function movePacman(direction: string) {
@@ -348,7 +324,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                 break;
         }
     }
-    
+
     return (
         <GameContext.Provider
             value={{

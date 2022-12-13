@@ -7,7 +7,7 @@ export const containerHeight = 620
  * 1 = wall, and
  * 2 = food (snack or power-up).
  */
-export const wallDistribution = [
+export const mazeDistribution = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
     [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
@@ -41,7 +41,7 @@ export const wallDistribution = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 
-export const gridSize = Math.round(containerHeight / wallDistribution.length)
+export const gridSize = Math.round(containerHeight / mazeDistribution.length)
 
 export function hasWall(x: number, y: number) {
     // Out of the board.
@@ -52,7 +52,7 @@ export function hasWall(x: number, y: number) {
     const i = Math.floor(y / gridSize)
     const j = Math.floor(x / gridSize)
     
-    return wallDistribution[i][j] == 1
+    return mazeDistribution[i][j] == 1
 }
 
 export function hasFood(i: number, j: number) {
@@ -61,5 +61,5 @@ export function hasFood(i: number, j: number) {
         return false
     }
 
-    return wallDistribution[j][i] == 2
+    return mazeDistribution[j][i] == 2
 }

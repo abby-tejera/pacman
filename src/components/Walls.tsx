@@ -1,10 +1,10 @@
-import { wallDistribution, gridSize } from '../constants/maze'
+import { mazeDistribution, gridSize } from '../constants/maze'
 import styles from '../styles/Walls.module.css'
 
 export function Walls() {
     return (
         <g>
-            {wallDistribution.map((row, j) => row.map((n, i) => (
+            {mazeDistribution.map((row, j) => row.map((n, i) => (
                 <>
                 {n == 1 ? (
                     <rect key={`${i},${j}`} x={i*gridSize} y={j*gridSize} width={gridSize} height={gridSize} className={styles.wall} />
