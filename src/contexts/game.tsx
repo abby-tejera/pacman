@@ -1,7 +1,7 @@
 import {ReactNode, useEffect, useState, useCallback} from 'react'
 import {createContext} from 'react'
 
-import { Ghost, initialGhosts, ghostStep } from '../constants/ghost'
+import { Ghost, initialGhosts, ghostStep, scatterGhostPositions } from '../constants/ghost'
 import { Food, snackRadius, powerUpProbability } from '../constants/food'
 import { containerHeight, containerWidth, gridSize, entityRadius, mazeDistribution } from '../constants/maze'
 import { pacmanInitialX, pacmanInitialY, pacmanStep } from '../constants/pacman'
@@ -33,7 +33,7 @@ export function GameProvider({children}: GameContextProviderProps) {
     const [pacmanDirection, setPacmanDirection] = useState('')
     const [isPoweredUp, setIsPoweredUp] = useState(false)
 
-    const [ghosts, setGhosts] = useState<Ghost[]>(initialGhosts)
+    const [ghosts, setGhosts] = useState<Ghost[]>([])
 
     const [snacks, setSnacks] = useState<Food[]>([])
     const [powerUps, setPowerUps] = useState<Food[]>([])
@@ -74,10 +74,12 @@ export function GameProvider({children}: GameContextProviderProps) {
         setPacmanX(pacmanInitialX)
         setPacmanY(pacmanInitialY)
 
-        setGhosts(initialGhosts)
+        setGhosts([])
+        setGhosts(initialGhosts.map(ghost => ({...ghost})))
+
         generateFood()
 
-        setGameHasStarted(true)
+        setGameHasStarted(false)
     }, [generateFood])
 
     // Handle when the player loses.
@@ -172,6 +174,9 @@ export function GameProvider({children}: GameContextProviderProps) {
 
         const interval = setInterval(() => {
             setGhosts(ghosts => ghosts.map(ghost => {
+                const previousX = ghost.x
+                const previousY = ghost.y
+
                 // Choose new x value. Make sure that we don't go over the walls.
                 if (ghost.x < ghost.targetX && isAllowedEntityPosition(ghost.x + ghostStep, ghost.y)) {
                     ghost.x = ghost.x + ghostStep
@@ -185,7 +190,13 @@ export function GameProvider({children}: GameContextProviderProps) {
                 } else if (ghost.y > ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y - ghostStep)) {
                     ghost.y = ghost.y - ghostStep
                 }
-                 
+
+                // If the ghost has not moved, choose new target randomly.
+                if (ghost.x == previousX && ghost.y == previousY) {
+                    ghost.targetX = Math.random() * containerWidth
+                    ghost.targetY = Math.random() * containerHeight
+                }
+
                 return ghost
             }))
         }, timeInterval * 1000)
@@ -201,12 +212,25 @@ export function GameProvider({children}: GameContextProviderProps) {
             switch (ghost.personality) {
                 // Always follows pacman.
                 case 'red':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[0].x
+                        ghost.targetY = scatterGhostPositions[0].y
+                        break;
+                    }
+
                     ghost.targetX = pacmanX
                     ghost.targetY = pacmanY
+                    
                     break;
                 
                 // Predicts pacman's future position (in a straight line) and goes there.
                 case 'pink':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[1].x
+                        ghost.targetY = scatterGhostPositions[1].y
+                        break;
+                    }
+                    
                     const tilesAhead = 10
                     switch (pacmanDirection) {
                         case 'right':
@@ -237,6 +261,12 @@ export function GameProvider({children}: GameContextProviderProps) {
                 // Looks at the front of pacman, draws a vector from the red ghost to that position,
                 // doubles that vector, and goes to that location.
                 case 'cyan':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[2].x
+                        ghost.targetY = scatterGhostPositions[2].y
+                        break;
+                    }
+                    
                     const redGhost = ghosts.find(ghost => ghost.personality == 'red')
                     if (!redGhost) {
                         break;
@@ -263,6 +293,12 @@ export function GameProvider({children}: GameContextProviderProps) {
                 
                 // Follows pacman until they are at a minimum distance, then it runs away.
                 case 'orange':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[3].x
+                        ghost.targetY = scatterGhostPositions[3].y
+                        break;
+                    }
+                    
                     const minDistance = 20;
                     if (Math.abs(pacmanX - ghost.x) < (2 * entityRadius + minDistance * pacmanStep) && Math.abs(pacmanY - ghost.y) < (2 * entityRadius + minDistance * pacmanStep)) {
                         // Run.
@@ -281,7 +317,7 @@ export function GameProvider({children}: GameContextProviderProps) {
 
             return ghost
         }))
-    }, [pacmanDirection, pacmanX, pacmanY])
+    }, [pacmanDirection, pacmanX, pacmanY, isPoweredUp])
 
     // Handle when the player wins.
     useEffect(function victory() {
