@@ -2,19 +2,18 @@ import { mazeDistribution, gridSize } from '../constants/maze'
 import styles from '../styles/Walls.module.css'
 
 export function Walls() {
-    return (
-        <g>
-            {mazeDistribution.map((row, j) => row.map((n, i) => (
-                <g key={`${i},${j}`}>
-                    {n == 1 && (
-                        <rect  x={i*gridSize} y={j*gridSize} width={gridSize} height={gridSize} className={styles.wall} />
-                    )}
-                </g>
-            )))}
-        </g>
-    )
+    // return (
+    //     <g>
+    //         {mazeDistribution.map((row, j) => row.map((n, i) => (
+    //             <g key={`${i},${j}`}>
+    //                 {n == 1 && (
+    //                     <rect  x={i*gridSize} y={j*gridSize} width={gridSize} height={gridSize} className={styles.wall} />
+    //                 )}
+    //             </g>
+    //         )))}
+    //     </g>
+    // )
 
-    // Disabled drawn walls due to inconsistency with the wall distribution.
     return (
         <g className={styles.walls}>
             <g id="Layer_1">
