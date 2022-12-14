@@ -9,6 +9,7 @@ export function Pacman() {
         pacmanX: x,
         pacmanY: y,
         movePacman,
+        pacmanDirection
     } = useGame()
 
     // Performing action on first page load.
@@ -47,6 +48,11 @@ export function Pacman() {
     }, [movePacman])
 
     return (
-        <circle className={styles.pacman} cx={x} cy={y} r={entityRadius} />
+        <g className={styles[pacmanDirection]}>
+            <circle className={styles.pacman} cx={x} cy={y} r={entityRadius} />
+            <circle className={styles.mouth} cx={x} cy={y} r={entityRadius} />
+
+            <circle className={styles.eye} cx={x + entityRadius / 6} cy={y - entityRadius / 2} r={entityRadius / 5} />
+        </g>
     )
 }

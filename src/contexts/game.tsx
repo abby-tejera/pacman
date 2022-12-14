@@ -15,6 +15,7 @@ type GameContextType = {
     pacmanY: number
     isPoweredUp: boolean
     movePacman: (direction: string) => void
+    pacmanDirection: string
 
     ghosts: Ghost[]
     snacks: Food[]
@@ -375,6 +376,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                 pacmanY,
                 isPoweredUp,
                 movePacman,
+                pacmanDirection,
                 ghosts,
                 snacks,
                 powerUps,
