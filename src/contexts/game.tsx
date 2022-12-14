@@ -274,6 +274,8 @@ export function GameProvider({children}: GameContextProviderProps) {
                     
                     const redGhost = ghosts.find(ghost => ghost.personality == 'red')
                     if (!redGhost) {
+                        ghost.targetX = pacmanX
+                        ghost.targetY = pacmanY
                         break;
                     }
 
@@ -304,7 +306,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                         break;
                     }
                     
-                    const minDistance = 20;
+                    const minDistance = 10;
                     if (Math.abs(pacmanX - ghost.x) < (2 * entityRadius + minDistance * pacmanStep) && Math.abs(pacmanY - ghost.y) < (2 * entityRadius + minDistance * pacmanStep)) {
                         // Run.
                         ghost.targetX = 0
