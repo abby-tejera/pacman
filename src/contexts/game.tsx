@@ -1,5 +1,5 @@
-import {ReactNode, useEffect, useState, useCallback} from 'react'
-import {createContext} from 'react'
+import {ReactNode, useEffect, useState, useCallback, createContext} from 'react'
+import Swal from 'sweetalert2'
 
 import { Ghost, initialGhosts, ghostStep, scatterGhostPositions } from '../constants/ghost'
 import { Food, snackRadius, powerUpProbability } from '../constants/food'
@@ -38,7 +38,7 @@ export function GameProvider({children}: GameContextProviderProps) {
     const [snacks, setSnacks] = useState<Food[]>([])
     const [powerUps, setPowerUps] = useState<Food[]>([])
 
-    const [gameHasStarted, setGameHasStarted] = useState(false)
+    const [isRunning, setIsRunning] = useState(false)
 
     // Adds snacks and power-ups to the game.
     const generateFood = useCallback(() => {
@@ -74,20 +74,20 @@ export function GameProvider({children}: GameContextProviderProps) {
         setPacmanX(pacmanInitialX)
         setPacmanY(pacmanInitialY)
 
-        setGhosts([])
         setGhosts(initialGhosts.map(ghost => ({...ghost})))
-
         generateFood()
 
-        setGameHasStarted(false)
+        setIsRunning(true)
     }, [generateFood])
 
     // Handle when the player loses.
     const gameOver = useCallback(() => {
-        setGameHasStarted(false)
+        setIsRunning(false)
 
-        alert("You lost!")
-        reset()
+        Swal.fire({
+            title: 'You lost!',
+            icon: 'error',
+        }).then(() => reset())
     }, [reset])
 
     // Start game.
@@ -170,6 +170,10 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Moves ghosts in the direction of their targets.
     useEffect(function moveGhosts() {
+        if (!isRunning) {
+            return
+        }
+        
         const timeInterval = 0.1 // in seconds
 
         const interval = setInterval(() => {
@@ -204,7 +208,7 @@ export function GameProvider({children}: GameContextProviderProps) {
         return () => {
             clearInterval(interval)
         }
-    }, [])
+    }, [isRunning])
 
     // Updates ghosts' targets based on their personalities.
     useEffect(function updateGhostsTargets() {
@@ -321,16 +325,22 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Handle when the player wins.
     useEffect(function victory() {
-        if (gameHasStarted && snacks.length == 0) {
-            setGameHasStarted(false)
+        if (isRunning && snacks.length == 0) {
+            setIsRunning(false)
 
-            alert("You won!!!!!")
-            reset()
+            Swal.fire({
+                title: 'You won!!!!!',
+                icon: 'success',
+            }).then(() => reset())
         }
-    }, [gameHasStarted, reset, snacks])
+    }, [isRunning, reset, snacks])
 
     // Moves pacman.
     function movePacman(direction: string) {
+        if (!isRunning) {
+            return
+        }
+
         setPacmanDirection(direction)
 
         switch (direction) {
