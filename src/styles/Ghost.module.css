@@ -1,12 +1,28 @@
+@import url("/../../public/ghost_one/g1D1.png");
+
 .ghost {
 	stroke-width: 0;
 	transform: translate(-9px, -9px);
 
 	transition: x 0.1s, y 0.1s;
+	fill:purple;
 }
 
 .red {
-	fill: red;
+	/* fill: red; */
+	z-index: 100;
+	opacity: 100;
+	display: inline-block;
+	position: absolute; 
+	content: url("/src/styles/g1D1.png");
+	background-image: url("/src/styles/g1D1.png");
+	/* background-repeat: no-repeat; */
+	image-rendering: optimizeQuality;
+	/* list-style-image:image("/../styles/g1D1.PNG", pink); */
+	/* background-image: image("/../../public/ghost_one/g1D1.PNG", blue); */
+
+	/* fill:image("/../styles/g1D1.png"); */
+	/* fill: image("/../styles/g1D1.PNG", blue); */
 }
 
 .pink {

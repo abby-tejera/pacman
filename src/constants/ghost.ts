@@ -1,5 +1,6 @@
 import { gridSize } from "./maze"
 import { pacmanInitialX, pacmanInitialY } from "./pacman"
+import "../../public/ghost_one/g1D1.png"
 
 export const ghostStep = 2 
 
@@ -10,6 +11,7 @@ export type Ghost = {
     personality: string // red, pink, cyan, or orange
     targetX: number
     targetY: number
+    image: string
 }
 
 export const scatterGhostPositions = [
@@ -26,6 +28,7 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[0].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
+    image: "/../../public/ghost_one/g1D1.png",
 }, {
     id: Math.random(),
     personality: 'pink',
@@ -33,6 +36,7 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[1].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
+    image: "/../../public/ghost_one/g1D1.png",
 }, {
     id: Math.random(),
     personality: 'cyan',
@@ -40,6 +44,7 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[2].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
+    image: "/../../public/ghost_one/g1D1.png",
 }, {
     id: Math.random(),
     personality: 'orange',
@@ -47,4 +52,5 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[3].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
+    image: "/../../public/ghost_one/g1D1.png",
 }]
