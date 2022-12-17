@@ -66,11 +66,10 @@ export default function Game() {
           <Ghost key={ghost.id} ghost={ghost} />
         ))}
       </svg>
-      {/* <audio controls > */}
-        {/* <source src="../src/pages/Pac_man_Long_Compilation_N_2.mp3" type="audio/mpeg"/> */}
-        {/* Your browser does not support audio tag */}
-        {/* loadeddata={"src/pacman_beginning.wav"} */}
-      {/* </audio> */}
+      <audio preload='auto' controls >
+        <source src="../src/pages/Pac_man_Long_Compilation_N_2.mp3" type="audio/mpeg"/>
+        Your browser does not support audio tag
+      </audio>
     </div>
   )
 }

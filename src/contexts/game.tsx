@@ -6,7 +6,7 @@ import { Food, snackRadius, powerUpProbability } from '../constants/food'
 import { containerHeight, containerWidth, gridSize, entityRadius, mazeDistribution } from '../constants/maze'
 import { pacmanInitialX, pacmanInitialY, pacmanStep } from '../constants/pacman'
 import { isAllowedEntityPosition, calc_i, calc_j } from '../utils/isAllowedEntityPosition'
-import { foodIsGone } from '../utils/foodIsGone'
+
 
 type GameContextType = {
     containerWidth: number
@@ -23,10 +23,10 @@ type GameContextType = {
     powerUps: Food[]
 }
 
-var quad1: 73;
-var quad2: 73;
-var quad3: 76;
-var quad4: 76;
+let quad1: 73;
+let quad2: 73;
+let quad3: 76;
+let quad4: 76;
 
 export const GameContext = createContext({} as GameContextType)
 
@@ -136,6 +136,8 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Check if pacman is eating food.
     useEffect(function checkIfEaten() {
+        let foodStays = true;
+
         // Square that represents Pacman's position.
         const left = pacmanX - entityRadius;
         const right = pacmanX + entityRadius;
@@ -150,7 +152,24 @@ export function GameProvider({children}: GameContextProviderProps) {
             const snackBottom = snack.y + snackRadius;
 
             // True if not eaten, and false if eaten.
-            return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
+            foodStays = (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom);
+
+            if (!foodStays) {
+                //calculate quadrant and decrement its food count:
+                if (pacmanX <= Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2) ) {
+                    quad1 -= 1;
+                }
+                else if (pacmanX > Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2) ) {
+                    quad2 -= 1;
+                }
+                else if (pacmanX <= Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                    quad3 -= 1;
+                }
+                else if (pacmanX > Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                    quad4 -= 1;
+                }
+            }
+            return foodStays;
         }))
 
         // Remove eaten power-ups.
@@ -194,92 +213,20 @@ export function GameProvider({children}: GameContextProviderProps) {
                 // Choose new x value. Make sure that we don't go over the walls.
                 if (ghost.x < ghost.targetX && isAllowedEntityPosition(ghost.x + ghostStep, ghost.y)) {
 
-                    if (foodIsGone(ghost.x + ghostStep, ghost.y)) {
-                        //determine quadrant
-                        i = calc_i(ghost.x + ghostStep, ghost.y)
-                        j = calc_j(ghost.x + ghostStep, ghost.y)
-
-                        //decrement quadrant count
-                        if (i < 14 && j < 15) {
-                            quad1 -= 1
-                        }
-                        else if (i < 14 && j > 14) {
-                            quad3 -= 1
-                        }
-                        else if (i > 13 && j < 15) {
-                            quad2 -= 1
-                        }
-                        else if (i > 13 && j > 14) {
-                            quad4 -= 1
-                        }
-                        
-                    }
                     ghost.x = ghost.x + ghostStep
-                } else if (ghost.x > ghost.targetX && isAllowedEntityPosition(ghost.x - ghostStep, ghost.y)) {
-                    if (foodIsGone(ghost.x - ghostStep, ghost.y)) {
-                        //determine quadrant
-                        i = calc_i(ghost.x - ghostStep, ghost.y)
-                        j = calc_j(ghost.x - ghostStep, ghost.y)
-
-                        //decrement quadrant count
-                        if (i < 14 && j < 15) {
-                            quad1 -= 1
-                        }
-                        else if (i < 14 && j > 14) {
-                            quad3 -= 1
-                        }
-                        else if (i > 13 && j < 15) {
-                            quad2 -= 1
-                        }
-                        else if (i > 13 && j > 14) {
-                            quad4 -= 1
-                        }
-                    }
+                } 
+                else if (ghost.x > ghost.targetX && isAllowedEntityPosition(ghost.x - ghostStep, ghost.y)) {
+                    
                     ghost.x = ghost.x - ghostStep
                 }
     
                 // Choose new y value. Make sure that we don't go over the walls.
                 if (ghost.y < ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y + ghostStep)) {
-                    if (foodIsGone(ghost.x, ghost.y + ghostStep)) {
-                        //determine quadrant
-                        i = calc_i(ghost.x, ghost.y + ghostStep)
-                        j = calc_j(ghost.x, ghost.y + ghostStep)
-
-                        //decrement quadrant count
-                        if (i < 14 && j < 15) {
-                            quad1 -= 1
-                        }
-                        else if (i < 14 && j > 14) {
-                            quad3 -= 1
-                        }
-                        else if (i > 13 && j < 15) {
-                            quad2 -= 1
-                        }
-                        else if (i > 13 && j > 14) {
-                            quad4 -= 1
-                        }
-                    }
+                    
                     ghost.y = ghost.y + ghostStep
-                } else if (ghost.y > ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y - ghostStep)) {
-                    if (foodIsGone(ghost.x, ghost.y - ghostStep)) {
-                        //determine quadrant
-                        i = calc_i(ghost.x, ghost.y - ghostStep)
-                        j = calc_j(ghost.x, ghost.y - ghostStep)
-
-                        //decrement quadrant count
-                        if (i < 14 && j < 15) {
-                            quad1 -= 1
-                        }
-                        else if (i < 14 && j > 14) {
-                            quad3 -= 1
-                        }
-                        else if (i > 13 && j < 15) {
-                            quad2 -= 1
-                        }
-                        else if (i > 13 && j > 14) {
-                            quad4 -= 1
-                        }
-                    }
+                } 
+                else if (ghost.y > ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y - ghostStep)) {
+                    
                     ghost.y = ghost.y - ghostStep
                 }
 
@@ -421,20 +368,48 @@ export function GameProvider({children}: GameContextProviderProps) {
                         var highest = Math.max(quad1, quad2, quad3, quad4)
 
                         if (highest == quad1) {
-                            ghost.targetX = scatterGhostPositions[1].x
-                            ghost.targetY = scatterGhostPositions[1].y
+                            //if both the ghost and pacman are in target quadrant, follow pacman:
+                            if (pacmanX <= Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2))
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
+                            }
+                            
                         }
                         else if (highest == quad2) {
-                            ghost.targetX = scatterGhostPositions[0].x
-                            ghost.targetY = scatterGhostPositions[0].y
+                            if (pacmanX > Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                            ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) +  Math.floor(containerWidth/2)
+                            ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
+                            }
                         }
                         else if (highest == quad3) {
-                            ghost.targetX = scatterGhostPositions[3].x
-                            ghost.targetY = scatterGhostPositions[3].y
+                            
+                            if (pacmanX <= Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) 
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
+                            }
                         }
                         else if (highest == quad4) {
-                            ghost.targetX = scatterGhostPositions[2].x
-                            ghost.targetY = scatterGhostPositions[2].y
+
+                            if (pacmanX > Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) + Math.floor(containerWidth/2)
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
+                            }
                         }
                     }
 
@@ -452,23 +427,23 @@ export function GameProvider({children}: GameContextProviderProps) {
                         ghost.targetY = pacmanY
                     }
                     else {
-                        var highest = Math.max(quad1, quad2, quad3, quad4)
+                        let highest = Math.max(quad1, quad2, quad3, quad4)
 
                         if (highest == quad4) {
-                            ghost.targetX = scatterGhostPositions[2].x
-                            ghost.targetY = scatterGhostPositions[2].y
+                            ghost.targetX = Math.floor(Math.random() * 280) + 280
+                            ghost.targetY = Math.floor(Math.random() * 310) + 310
                         }
                         else if (highest == quad3) {
-                            ghost.targetX = scatterGhostPositions[3].x
-                            ghost.targetY = scatterGhostPositions[3].y
+                            ghost.targetX = Math.floor(Math.random() * 280) 
+                            ghost.targetY = Math.floor(Math.random() * 310) + 310
                         }
                         else if (highest == quad2) {
-                            ghost.targetX = scatterGhostPositions[0].x
-                            ghost.targetY = scatterGhostPositions[0].y
+                            ghost.targetX = Math.floor(Math.random() * 280) + 280
+                            ghost.targetY = Math.floor(Math.random() * 310)
                         }
                         else if (highest == quad1) {
-                            ghost.targetX = scatterGhostPositions[1].x
-                            ghost.targetY = scatterGhostPositions[1].y
+                            ghost.targetX = Math.floor(Math.random() * 280)
+                            ghost.targetY = Math.floor(Math.random() * 310)
                         }
                     }
                     

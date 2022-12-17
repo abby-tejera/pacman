@@ -19,8 +19,8 @@ export const scatterGhostPositions = [
     {x: 1 * gridSize + gridSize / 2, y: 1 * gridSize + gridSize / 2}, // pink (upper left corner)
     {x: 26 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // cyan (lower right corner)
     {x: 1 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // orange (lower left corner)
-    {x: 13 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // cyan (lower right corner)
-    {x: 1 * gridSize + gridSize / 2, y: 14 * gridSize + gridSize / 2}, // orange (lower left corner)
+    {x: 13 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, //purple1
+    {x: 1 * gridSize + gridSize / 2, y: 14 * gridSize + gridSize / 2}, //purple2
 ]
 
 

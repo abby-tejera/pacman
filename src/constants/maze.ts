@@ -45,3 +45,8 @@ export const mazeDistribution = [
 
 export const gridSize = Math.round(containerHeight / mazeDistribution.length)
 export const entityRadius = 9 // radius of pacman and ghosts.
+
+export const xLeft = 281;
+export const xRight = 280;
+export const yUp = 311;
+export const yDown = 310;
