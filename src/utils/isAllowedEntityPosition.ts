@@ -24,3 +24,26 @@ export function isAllowedEntityPosition(centerX: number, centerY: number) {
 
     return result
 }
+
+export function calc_i(centerX: number, centerY: number) {
+    let result = 0
+
+    for (let pointX = centerX - entityRadius; pointX <= centerX + entityRadius; pointX++) {
+        for (let pointY = centerY - entityRadius; pointY <= centerY + entityRadius; pointY++) {
+            result = Math.floor(pointY / gridSize)
+        }
+    }
+
+    return result
+}
+export function calc_j(centerX: number, centerY: number) {
+    let result = 0
+
+    for (let pointX = centerX - entityRadius; pointX <= centerX + entityRadius; pointX++) {
+        for (let pointY = centerY - entityRadius; pointY <= centerY + entityRadius; pointY++) {
+            result = Math.floor(pointX / gridSize)
+        }
+    }
+
+    return result
+}

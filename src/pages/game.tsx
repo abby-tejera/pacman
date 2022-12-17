@@ -5,7 +5,15 @@ import { useGame } from '../hooks/useGame'
 import { Snack } from '../components/Snack'
 import { PowerUp } from '../components/PowerUp'
 import { Walls } from '../components/Walls'
+import module from 'module'
 
+
+// import { AudioHTMLAttributes } from 'react'
+
+
+
+// import {html} from "./file.html";
+// import "src/pacman_beginning.wav"
 // Game page (url: '/game')
 export default function Game() {
   const {
@@ -16,8 +24,26 @@ export default function Game() {
     powerUps,
   } = useGame()
 
+  // const loadFile = "src/pacman_beginning.wav";
+
+  // const audioElement = new Audio("src/pacman_beginning.wav");
+  // audioElement.addEventListener("loadeddata", () => {
+  //   let duration = audioElement.duration;
+  // });
+  // audioElement.addEventListener("canplaythrough", (event) => {
+    /* the audio is now playable; play it if permissions allow */
+    // audioElement.play();
+  // });
+
+  // audioElement.addEventListener('playing', function() {
+    // console.log(audioElement.duration());
+  // }, false);
+
+  
   return (
+
     <div className={styles.page}>
+      {/* audioElement.play() */}
       <svg
         className={styles.container}
         xmlns="http://www.w3.org/2000/svg"
@@ -40,6 +66,11 @@ export default function Game() {
           <Ghost key={ghost.id} ghost={ghost} />
         ))}
       </svg>
+      {/* <audio controls > */}
+        {/* <source src="../src/pages/Pac_man_Long_Compilation_N_2.mp3" type="audio/mpeg"/> */}
+        {/* Your browser does not support audio tag */}
+        {/* loadeddata={"src/pacman_beginning.wav"} */}
+      {/* </audio> */}
     </div>
   )
 }

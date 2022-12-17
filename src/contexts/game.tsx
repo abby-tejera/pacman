@@ -5,7 +5,8 @@ import { Ghost, initialGhosts, ghostStep, scatterGhostPositions } from '../const
 import { Food, snackRadius, powerUpProbability } from '../constants/food'
 import { containerHeight, containerWidth, gridSize, entityRadius, mazeDistribution } from '../constants/maze'
 import { pacmanInitialX, pacmanInitialY, pacmanStep } from '../constants/pacman'
-import { isAllowedEntityPosition } from '../utils/isAllowedEntityPosition'
+import { isAllowedEntityPosition, calc_i, calc_j } from '../utils/isAllowedEntityPosition'
+import { foodIsGone } from '../utils/foodIsGone'
 
 type GameContextType = {
     containerWidth: number
@@ -21,6 +22,11 @@ type GameContextType = {
     snacks: Food[]
     powerUps: Food[]
 }
+
+var quad1: 73;
+var quad2: 73;
+var quad3: 76;
+var quad4: 76;
 
 export const GameContext = createContext({} as GameContextType)
 
@@ -182,17 +188,98 @@ export function GameProvider({children}: GameContextProviderProps) {
                 const previousX = ghost.x
                 const previousY = ghost.y
 
+                var i = 0;
+                var j = 0;
+
                 // Choose new x value. Make sure that we don't go over the walls.
                 if (ghost.x < ghost.targetX && isAllowedEntityPosition(ghost.x + ghostStep, ghost.y)) {
+
+                    if (foodIsGone(ghost.x + ghostStep, ghost.y)) {
+                        //determine quadrant
+                        i = calc_i(ghost.x + ghostStep, ghost.y)
+                        j = calc_j(ghost.x + ghostStep, ghost.y)
+
+                        //decrement quadrant count
+                        if (i < 14 && j < 15) {
+                            quad1 -= 1
+                        }
+                        else if (i < 14 && j > 14) {
+                            quad3 -= 1
+                        }
+                        else if (i > 13 && j < 15) {
+                            quad2 -= 1
+                        }
+                        else if (i > 13 && j > 14) {
+                            quad4 -= 1
+                        }
+                        
+                    }
                     ghost.x = ghost.x + ghostStep
                 } else if (ghost.x > ghost.targetX && isAllowedEntityPosition(ghost.x - ghostStep, ghost.y)) {
+                    if (foodIsGone(ghost.x - ghostStep, ghost.y)) {
+                        //determine quadrant
+                        i = calc_i(ghost.x - ghostStep, ghost.y)
+                        j = calc_j(ghost.x - ghostStep, ghost.y)
+
+                        //decrement quadrant count
+                        if (i < 14 && j < 15) {
+                            quad1 -= 1
+                        }
+                        else if (i < 14 && j > 14) {
+                            quad3 -= 1
+                        }
+                        else if (i > 13 && j < 15) {
+                            quad2 -= 1
+                        }
+                        else if (i > 13 && j > 14) {
+                            quad4 -= 1
+                        }
+                    }
                     ghost.x = ghost.x - ghostStep
                 }
     
                 // Choose new y value. Make sure that we don't go over the walls.
                 if (ghost.y < ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y + ghostStep)) {
+                    if (foodIsGone(ghost.x, ghost.y + ghostStep)) {
+                        //determine quadrant
+                        i = calc_i(ghost.x, ghost.y + ghostStep)
+                        j = calc_j(ghost.x, ghost.y + ghostStep)
+
+                        //decrement quadrant count
+                        if (i < 14 && j < 15) {
+                            quad1 -= 1
+                        }
+                        else if (i < 14 && j > 14) {
+                            quad3 -= 1
+                        }
+                        else if (i > 13 && j < 15) {
+                            quad2 -= 1
+                        }
+                        else if (i > 13 && j > 14) {
+                            quad4 -= 1
+                        }
+                    }
                     ghost.y = ghost.y + ghostStep
                 } else if (ghost.y > ghost.targetY && isAllowedEntityPosition(ghost.x, ghost.y - ghostStep)) {
+                    if (foodIsGone(ghost.x, ghost.y - ghostStep)) {
+                        //determine quadrant
+                        i = calc_i(ghost.x, ghost.y - ghostStep)
+                        j = calc_j(ghost.x, ghost.y - ghostStep)
+
+                        //decrement quadrant count
+                        if (i < 14 && j < 15) {
+                            quad1 -= 1
+                        }
+                        else if (i < 14 && j > 14) {
+                            quad3 -= 1
+                        }
+                        else if (i > 13 && j < 15) {
+                            quad2 -= 1
+                        }
+                        else if (i > 13 && j > 14) {
+                            quad4 -= 1
+                        }
+                    }
                     ghost.y = ghost.y - ghostStep
                 }
 
@@ -317,7 +404,75 @@ export function GameProvider({children}: GameContextProviderProps) {
                         ghost.targetY = pacmanY
                     }
                     break;
+
+                    
+                case 'purpleOne':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[4].x
+                        ghost.targetY = scatterGhostPositions[4].y
+                        break;
+                    }
+
+                    if(quad1 == 73 && quad2 == 73 && quad3 == 76 && quad4 == 76){
+                        ghost.targetX = pacmanX
+                        ghost.targetY = pacmanY
+                    }
+                    else {
+                        var highest = Math.max(quad1, quad2, quad3, quad4)
+
+                        if (highest == quad1) {
+                            ghost.targetX = scatterGhostPositions[1].x
+                            ghost.targetY = scatterGhostPositions[1].y
+                        }
+                        else if (highest == quad2) {
+                            ghost.targetX = scatterGhostPositions[0].x
+                            ghost.targetY = scatterGhostPositions[0].y
+                        }
+                        else if (highest == quad3) {
+                            ghost.targetX = scatterGhostPositions[3].x
+                            ghost.targetY = scatterGhostPositions[3].y
+                        }
+                        else if (highest == quad4) {
+                            ghost.targetX = scatterGhostPositions[2].x
+                            ghost.targetY = scatterGhostPositions[2].y
+                        }
+                    }
+
+                    break;    
             
+                case 'purpleTwo':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[5].x
+                        ghost.targetY = scatterGhostPositions[5].y
+                        break;
+                    }
+
+                    if(quad1 == 73 && quad2 == 73 && quad3 == 76 && quad4 == 76){
+                        ghost.targetX = pacmanX
+                        ghost.targetY = pacmanY
+                    }
+                    else {
+                        var highest = Math.max(quad1, quad2, quad3, quad4)
+
+                        if (highest == quad4) {
+                            ghost.targetX = scatterGhostPositions[2].x
+                            ghost.targetY = scatterGhostPositions[2].y
+                        }
+                        else if (highest == quad3) {
+                            ghost.targetX = scatterGhostPositions[3].x
+                            ghost.targetY = scatterGhostPositions[3].y
+                        }
+                        else if (highest == quad2) {
+                            ghost.targetX = scatterGhostPositions[0].x
+                            ghost.targetY = scatterGhostPositions[0].y
+                        }
+                        else if (highest == quad1) {
+                            ghost.targetX = scatterGhostPositions[1].x
+                            ghost.targetY = scatterGhostPositions[1].y
+                        }
+                    }
+                    
+                    break;  
                 default:
                     break;
             }

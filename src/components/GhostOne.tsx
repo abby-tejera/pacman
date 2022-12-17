@@ -14,7 +14,7 @@
 
 // import g1D2 from '/public/ghost_one/g1D2.png'
 
-// import React from 'react'
+import React from 'react'
 
 
 // //GHOST FRAME ARRAYS:

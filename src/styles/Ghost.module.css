@@ -1,4 +1,5 @@
-@import url("/../../public/ghost_one/g1D1.png");
+@import url("/../../public/g1D1.PNG");
+
 
 .ghost {
 	stroke-width: 0;
@@ -8,16 +9,18 @@
 	fill:purple;
 }
 
+
 .red {
-	/* fill: red; */
-	z-index: 100;
+	
+	fill: red;
+	/* z-index: 100;
 	opacity: 100;
 	display: inline-block;
-	position: absolute; 
-	content: url("/src/styles/g1D1.png");
-	background-image: url("/src/styles/g1D1.png");
+	position: absolute;  */
+	/* content: url("/../../public/g1D1.PNG"); */
+	/* background-image: url("/../../public/g1D1.PNG"); */
 	/* background-repeat: no-repeat; */
-	image-rendering: optimizeQuality;
+	/* image-rendering: optimizeQuality; */
 	/* list-style-image:image("/../styles/g1D1.PNG", pink); */
 	/* background-image: image("/../../public/ghost_one/g1D1.PNG", blue); */
 
@@ -35,6 +38,14 @@
 
 .orange {
 	fill: orange;
+}
+
+.purpleOne {
+	fill: purple;
+}
+
+.purpleTwo {
+	fill: purple;
 }
 
 .weakened {

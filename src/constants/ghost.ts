@@ -1,6 +1,6 @@
 import { gridSize } from "./maze"
 import { pacmanInitialX, pacmanInitialY } from "./pacman"
-import "../../public/ghost_one/g1D1.png"
+import "../../public/g1D1.PNG"
 
 export const ghostStep = 2 
 
@@ -19,7 +19,10 @@ export const scatterGhostPositions = [
     {x: 1 * gridSize + gridSize / 2, y: 1 * gridSize + gridSize / 2}, // pink (upper left corner)
     {x: 26 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // cyan (lower right corner)
     {x: 1 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // orange (lower left corner)
+    {x: 13 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // cyan (lower right corner)
+    {x: 1 * gridSize + gridSize / 2, y: 14 * gridSize + gridSize / 2}, // orange (lower left corner)
 ]
+
 
 export const initialGhosts: Ghost[] = [{
     id: Math.random(),
@@ -28,7 +31,7 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[0].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
-    image: "/../../public/ghost_one/g1D1.png",
+    image: "/../../public/g1D1.PNG",
 }, {
     id: Math.random(),
     personality: 'pink',
@@ -36,7 +39,7 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[1].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
-    image: "/../../public/ghost_one/g1D1.png",
+    image: "/../../public/g1D1.PNG",
 }, {
     id: Math.random(),
     personality: 'cyan',
@@ -44,7 +47,7 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[2].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
-    image: "/../../public/ghost_one/g1D1.png",
+    image: "/../../public/g1D1.PNG",
 }, {
     id: Math.random(),
     personality: 'orange',
@@ -52,5 +55,21 @@ export const initialGhosts: Ghost[] = [{
     y: scatterGhostPositions[3].y,
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
-    image: "/../../public/ghost_one/g1D1.png",
+    image: "/../../public/g1D1.PNG",
+}, {
+    id: Math.random(),
+    personality: 'purpleOne',
+    x: scatterGhostPositions[4].x,
+    y: scatterGhostPositions[4].y,
+    targetX: pacmanInitialX,
+    targetY: pacmanInitialY,
+    image: "/../../public/g1D1.PNG",
+}, {
+    id: Math.random(),
+    personality: 'purpleTwo',
+    x: scatterGhostPositions[5].x,
+    y: scatterGhostPositions[5].y,
+    targetX: pacmanInitialX,
+    targetY: pacmanInitialY,
+    image: "/../../public/g1D1.PNG",
 }]

@@ -29,6 +29,7 @@ export default function Home() {
           </Link>
         </main>
       </section>
+      <script src="main.js"></script>
     </div>
   )
 }
