@@ -12,7 +12,7 @@ export function Ghost({ghost}: Props) {
     const {isPoweredUp} = useGame()
 
     return (
-        <image
+        <rect
             className={`
                 ${styles.ghost}
                 ${styles[ghost.personality]}
@@ -22,8 +22,6 @@ export function Ghost({ghost}: Props) {
             y={ghost.y}
             width={2 * entityRadius}
             height={2 * entityRadius}
-            href="../../public/ghost_one/g1D1.png"
         />
-       
     )
 }
