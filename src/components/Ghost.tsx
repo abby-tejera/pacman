@@ -24,6 +24,5 @@ export function Ghost({ghost}: Props) {
         width={2 * entityRadius}
         height={2 * entityRadius}
         />
-       
     )
 }

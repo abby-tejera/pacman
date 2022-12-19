@@ -379,7 +379,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                             }
                             
                         }
-                        else if (highest == quad2) {
+                        if (highest == quad2) {
                             if (pacmanX > Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
                                 ghost.targetX = pacmanX
                                 ghost.targetY = pacmanY
@@ -389,7 +389,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                             ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
                             }
                         }
-                        else if (highest == quad3) {
+                        if (highest == quad3) {
                             
                             if (pacmanX <= Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
                                 ghost.targetX = pacmanX
@@ -400,7 +400,7 @@ export function GameProvider({children}: GameContextProviderProps) {
                                 ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
                             }
                         }
-                        else if (highest == quad4) {
+                        if (highest == quad4) {
 
                             if (pacmanX > Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2)) {
                                 ghost.targetX = pacmanX

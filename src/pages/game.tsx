@@ -26,7 +26,7 @@ export default function Game() {
 
   // const loadFile = "src/pacman_beginning.wav";
 
-  // const audioElement = new Audio("src/pacman_beginning.wav");
+  // const audioElement = new Audio("/pacman_beginning.wav");
   // audioElement.addEventListener("loadeddata", () => {
   //   let duration = audioElement.duration;
   // });
@@ -66,10 +66,11 @@ export default function Game() {
           <Ghost key={ghost.id} ghost={ghost} />
         ))}
       </svg>
-      <audio preload='auto' controls >
-        <source src="../src/pages/Pac_man_Long_Compilation_N_2.mp3" type="audio/mpeg"/>
+      <audio preload='auto' loop controls autoPlay>
+        <source src="/Pac_man_Long_Compilation_N_2.mp3" type="audio/mpeg"/>
         Your browser does not support audio tag
       </audio>
+      {/* audioElement.autoplay = True; */}
     </div>
   )
 }
