@@ -8,7 +8,7 @@ export type Ghost = {
     id: number
     x: number
     y: number
-    personality: string // red, pink, cyan, or orange
+    personality: string // red, pink, cyan, orange, or purple
     targetX: number
     targetY: number
     image: string
@@ -19,6 +19,8 @@ export const scatterGhostPositions = [
     {x: 1 * gridSize + gridSize / 2, y: 1 * gridSize + gridSize / 2}, // pink (upper left corner)
     {x: 26 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // cyan (lower right corner)
     {x: 1 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, // orange (lower left corner)
+    {x: 13 * gridSize + gridSize / 2, y: 29 * gridSize + gridSize / 2}, //purple1
+    {x: 1 * gridSize + gridSize / 2, y: 14 * gridSize + gridSize / 2}, //purple2
 ]
 
 export const initialGhosts: Ghost[] = [{
@@ -53,4 +55,21 @@ export const initialGhosts: Ghost[] = [{
     targetX: pacmanInitialX,
     targetY: pacmanInitialY,
     image: "/../../public/ghost_one/g1D1.png",
+}, {
+    id: Math.random(),
+    personality: 'purpleOne',
+    x: scatterGhostPositions[4].x,
+    y: scatterGhostPositions[4].y,
+    targetX: pacmanInitialX,
+    targetY: pacmanInitialY,
+    image: "/../../public/g1D1.PNG",
+}, {
+    id: Math.random(),
+    personality: 'purpleTwo',
+    x: scatterGhostPositions[5].x,
+    y: scatterGhostPositions[5].y,
+    targetX: pacmanInitialX,
+    targetY: pacmanInitialY,
+    image: "/../../public/g1D1.PNG",
 }]
+

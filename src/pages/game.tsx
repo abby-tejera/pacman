@@ -40,6 +40,10 @@ export default function Game() {
           <Ghost key={ghost.id} ghost={ghost} />
         ))}
       </svg>
+      <audio  preload='auto' autoPlay loop>
+        <source src="/pacman_beginning.wav" type="audio/mpeg"/>
+        Your browser does not support audio tag
+      </audio>
     </div>
   )
 }

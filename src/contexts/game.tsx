@@ -22,6 +22,11 @@ type GameContextType = {
     powerUps: Food[]
 }
 
+let quad1: 73;
+let quad2: 73;
+let quad3: 76;
+let quad4: 76;
+
 export const GameContext = createContext({} as GameContextType)
 
 type GameContextProviderProps = {
@@ -130,6 +135,8 @@ export function GameProvider({children}: GameContextProviderProps) {
 
     // Check if pacman is eating food.
     useEffect(function checkIfEaten() {
+        let foodStays = true; 
+
         // Square that represents Pacman's position.
         const left = pacmanX - entityRadius;
         const right = pacmanX + entityRadius;
@@ -144,7 +151,24 @@ export function GameProvider({children}: GameContextProviderProps) {
             const snackBottom = snack.y + snackRadius;
 
             // True if not eaten, and false if eaten.
-            return (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom)
+            foodStays = (snackRight < left || snackLeft > right) || (snackBottom < top || snackTop > bottom);
+
+            if (!foodStays) {
+                //calculate quadrant and decrement its food count:
+                if (pacmanX <= Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2) ) {
+                    quad1 -= 1;
+                }
+                else if (pacmanX > Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2) ) {
+                    quad2 -= 1;
+                }
+                else if (pacmanX <= Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                    quad3 -= 1;
+                }
+                else if (pacmanX > Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                    quad4 -= 1;
+                }
+            }
+            return foodStays;
         }))
 
         // Remove eaten power-ups.
@@ -317,11 +341,134 @@ export function GameProvider({children}: GameContextProviderProps) {
                         ghost.targetY = pacmanY
                     }
                     break;
+
+                case 'purpleOne':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[4].x
+                        ghost.targetY = scatterGhostPositions[4].y
+                        break;
+                    }
+
+                    if(quad1 == 73 && quad2 == 73 && quad3 == 76 && quad4 == 76){
+                        ghost.targetX = pacmanX
+                        ghost.targetY = pacmanY
+                    }
+                    else {
+                        var highest = Math.max(quad1, quad2, quad3, quad4)
+
+                        if (highest == quad1) {
+                            //if both the ghost and pacman are in target quadrant, follow pacman:
+                            if (pacmanX <= Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2))
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
+                            }
+                            
+                        }
+                        if (highest == quad2) {
+                            if (pacmanX > Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                            ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) +  Math.floor(containerWidth/2)
+                            ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
+                            }
+                        }
+                        if (highest == quad3) {
+                            
+                            if (pacmanX <= Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) 
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
+                            }
+                        }
+                        if (highest == quad4) {
+
+                            if (pacmanX > Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) + Math.floor(containerWidth/2)
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
+                            }
+                        }
+                    }
+
+                    break;    
+            
+                case 'purpleTwo':
+                    if (isPoweredUp) {
+                        ghost.targetX = scatterGhostPositions[5].x
+                        ghost.targetY = scatterGhostPositions[5].y
+                        break;
+                    }
+
+                    if(quad1 == 73 && quad2 == 73 && quad3 == 76 && quad4 == 76){
+                        ghost.targetX = pacmanX
+                        ghost.targetY = pacmanY
+                    }
+                    else {
+                        let highest = Math.max(quad1, quad2, quad3, quad4)
+
+                        if (highest == quad4) {
+                            if (pacmanX > Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) + Math.floor(containerWidth/2)
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
+                            }
+                        }
+                        else if (highest == quad3) {
+                            if (pacmanX <= Math.floor(containerWidth/2) && pacmanY > Math.floor(containerHeight/2) ) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) 
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2)) + Math.floor(containerHeight/2)
+                            }
+                        }
+                        else if (highest == quad2) {
+                            if (pacmanX > Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                            ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2)) +  Math.floor(containerWidth/2)
+                            ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
+                            }
+                        }
+                        else if (highest == quad1) {
+                            if (pacmanX <= Math.floor(containerWidth/2) && pacmanY <= Math.floor(containerHeight/2)) {
+                                ghost.targetX = pacmanX
+                                ghost.targetY = pacmanY
+                            }
+                            else {
+                                ghost.targetX = Math.floor(Math.random() * Math.floor(containerWidth/2))
+                                ghost.targetY = Math.floor(Math.random() * Math.floor(containerHeight/2))
+                            }
+                        }
+                    }
+                    
+                    break;  
+            
+                
             
                 default:
                     break;
             }
 
+            
             return ghost
         }))
     }, [pacmanDirection, pacmanX, pacmanY, isPoweredUp])
